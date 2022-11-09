@@ -18,6 +18,7 @@ export function handleAgentConfirmationEvent(
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
   transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
@@ -44,6 +45,7 @@ export function handleClientConfirmationEvent(
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
   transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
@@ -68,6 +70,7 @@ export function handleConfirmationCompletedEvent(
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
   transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
@@ -92,6 +95,7 @@ export function handleTransactionCompletionEvent(
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
   transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
@@ -114,6 +118,7 @@ export function handleTransactionInitEvent(event: TransactionInitEvent): void {
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
   transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;

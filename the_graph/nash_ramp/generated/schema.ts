@@ -44,6 +44,23 @@ export class EscrowTransaction extends Entity {
     this.set("id", Value.fromString(value));
   }
 
+  get index(): BigInt | null {
+    let value = this.get("index");
+    if (!value || value.kind == ValueKind.NULL) {
+      return null;
+    } else {
+      return value.toBigInt();
+    }
+  }
+
+  set index(value: BigInt | null) {
+    if (!value) {
+      this.unset("index");
+    } else {
+      this.set("index", Value.fromBigInt(<BigInt>value));
+    }
+  }
+
   get txType(): i32 {
     let value = this.get("txType");
     return value!.toI32();

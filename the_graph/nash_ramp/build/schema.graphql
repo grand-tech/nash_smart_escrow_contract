@@ -1,5 +1,6 @@
 type EscrowTransaction @entity {
   id: ID!
+  index: BigInt
   txType: Int
   clientAddress: Bytes
   agentAddress: Bytes
