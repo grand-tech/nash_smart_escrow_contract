@@ -24,15 +24,15 @@ dataSources:
           file: ./abis/NashEscrow.json
       eventHandlers:
         - event: AgentConfirmationEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleAgentConfirmationEvent
         - event: AgentPairingEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleAgentPairingEvent
         - event: ClientConfirmationEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleClientConfirmationEvent
         - event: ConfirmationCompletedEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleConfirmationCompletedEvent
         - event: TransactionCompletionEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleTransactionCompletionEvent
         - event: TransactionInitEvent((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))
-          handler: handleEscrowEvents
+          handler: handleTransactionInitEvent
       file: ./src/nash-escrow.ts

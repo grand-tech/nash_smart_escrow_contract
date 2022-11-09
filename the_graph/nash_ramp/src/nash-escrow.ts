@@ -22,6 +22,7 @@ export function handleAgentConfirmationEvent(
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
   transaction.netAmount = event.params.wtx.netAmount;
   transaction.agentFee = event.params.wtx.agentFee;
   transaction.nashFee = event.params.wtx.nashFee;
@@ -34,7 +35,29 @@ export function handleAgentConfirmationEvent(
   transaction.save();
 }
 
-export function handleAgentPairingEvent(event: AgentPairingEvent): void {}
+export function handleAgentPairingEvent(event: AgentPairingEvent): void {
+  let transaction = EscrowTransaction.load(event.params.wtx.id.toString());
+
+  if (!transaction) {
+    transaction = new EscrowTransaction(event.params.wtx.id.toString());
+  }
+
+  transaction.id = event.params.wtx.id.toString();
+  transaction.index = event.params.wtx.id;
+  transaction.txType = event.params.wtx.txType;
+  transaction.clientAddress = event.params.wtx.clientAddress;
+  transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
+  transaction.netAmount = event.params.wtx.netAmount;
+  transaction.agentFee = event.params.wtx.agentFee;
+  transaction.nashFee = event.params.wtx.nashFee;
+  transaction.grossAmount = event.params.wtx.grossAmount;
+  transaction.agentApproval = event.params.wtx.agentApproval;
+  transaction.clientApproval = event.params.wtx.clientApproval;
+  transaction.agentPhoneNumber = event.params.wtx.agentPhoneNumber;
+  transaction.clientPhoneNumber = event.params.wtx.clientPhoneNumber;
+  transaction.save();
+}
 
 export function handleClientConfirmationEvent(
   event: ClientConfirmationEvent
@@ -44,11 +67,13 @@ export function handleClientConfirmationEvent(
   if (!transaction) {
     transaction = new EscrowTransaction(event.params.wtx.id.toString());
   }
+
   transaction.id = event.params.wtx.id.toString();
   transaction.index = event.params.wtx.id;
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
   transaction.netAmount = event.params.wtx.netAmount;
   transaction.agentFee = event.params.wtx.agentFee;
   transaction.nashFee = event.params.wtx.nashFee;
@@ -74,6 +99,7 @@ export function handleConfirmationCompletedEvent(
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
   transaction.netAmount = event.params.wtx.netAmount;
   transaction.agentFee = event.params.wtx.agentFee;
   transaction.nashFee = event.params.wtx.nashFee;
@@ -99,6 +125,7 @@ export function handleTransactionCompletionEvent(
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
   transaction.netAmount = event.params.wtx.netAmount;
   transaction.agentFee = event.params.wtx.agentFee;
   transaction.nashFee = event.params.wtx.nashFee;
@@ -122,6 +149,7 @@ export function handleTransactionInitEvent(event: TransactionInitEvent): void {
   transaction.txType = event.params.wtx.txType;
   transaction.clientAddress = event.params.wtx.clientAddress;
   transaction.agentAddress = event.params.wtx.agentAddress;
+  transaction.status = event.params.wtx.status;
   transaction.netAmount = event.params.wtx.netAmount;
   transaction.agentFee = event.params.wtx.agentFee;
   transaction.nashFee = event.params.wtx.nashFee;
@@ -133,6 +161,7 @@ export function handleTransactionInitEvent(event: TransactionInitEvent): void {
 
   transaction.save();
 }
+
 
 // type EscrowEvents =
 //   AgentConfirmationEvent

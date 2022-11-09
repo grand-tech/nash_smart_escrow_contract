@@ -1,9 +1,10 @@
 type EscrowTransaction @entity {
   id: ID!
-  index: BigInt
-  txType: Int
+  index: BigInt!
+  txType: Int!
   clientAddress: Bytes
   agentAddress: Bytes
+  status: Int!
   netAmount: BigInt
   agentFee: BigInt
   nashFee: BigInt

@@ -44,21 +44,13 @@ export class EscrowTransaction extends Entity {
     this.set("id", Value.fromString(value));
   }
 
-  get index(): BigInt | null {
+  get index(): BigInt {
     let value = this.get("index");
-    if (!value || value.kind == ValueKind.NULL) {
-      return null;
-    } else {
-      return value.toBigInt();
-    }
+    return value!.toBigInt();
   }
 
-  set index(value: BigInt | null) {
-    if (!value) {
-      this.unset("index");
-    } else {
-      this.set("index", Value.fromBigInt(<BigInt>value));
-    }
+  set index(value: BigInt) {
+    this.set("index", Value.fromBigInt(value));
   }
 
   get txType(): i32 {
@@ -102,6 +94,15 @@ export class EscrowTransaction extends Entity {
     } else {
       this.set("agentAddress", Value.fromBytes(<Bytes>value));
     }
+  }
+
+  get status(): i32 {
+    let value = this.get("status");
+    return value!.toI32();
+  }
+
+  set status(value: i32) {
+    this.set("status", Value.fromI32(value));
   }
 
   get netAmount(): BigInt | null {
