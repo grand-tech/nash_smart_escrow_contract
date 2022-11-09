@@ -1,0 +1,14 @@
+type EscrowTransaction @entity {
+  id: ID!
+  txType: Int
+  clientAddress: Bytes
+  agentAddress: Bytes
+  netAmount: BigInt
+  agentFee: BigInt
+  nashFee: BigInt
+  grossAmount: BigInt
+  agentApproval: Boolean
+  clientApproval: Boolean
+  agentPhoneNumber: String
+  clientPhoneNumber: String
+}
