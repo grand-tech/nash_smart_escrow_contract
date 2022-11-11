@@ -5,7 +5,7 @@
   "event ClientConfirmationEvent(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "event ConfirmationCompletedEvent(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "event TransactionCompletionEvent(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
-  "event TransactionInitEvent(uint256,address)",
+  "event TransactionInitEvent(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "function agentAcceptDepositTransaction(uint256,string) payable",
   "function agentAcceptWithdrawalTransaction(uint256,string)",
   "function agentConfirmPayment(uint256)",
@@ -17,6 +17,7 @@
   "function getNextTransactionIndex() view returns (uint256)",
   "function getNextUnpairedTransaction(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "function getTransactionByIndex(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
+  "function getTransactions(uint256,uint256,uint8) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string)[])",
   "function initializeDepositTransaction(uint256,string)",
   "function initializeWithdrawalTransaction(uint256,string) payable"
 ]

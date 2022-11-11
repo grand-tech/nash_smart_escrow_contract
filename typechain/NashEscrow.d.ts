@@ -33,6 +33,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "getNextTransactionIndex()": FunctionFragment;
     "getNextUnpairedTransaction(uint256)": FunctionFragment;
     "getTransactionByIndex(uint256)": FunctionFragment;
+    "getTransactions(uint256,uint256,uint8)": FunctionFragment;
     "initializeDepositTransaction(uint256,string)": FunctionFragment;
     "initializeWithdrawalTransaction(uint256,string)": FunctionFragment;
   };
@@ -80,6 +81,10 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "getTransactionByIndex",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "getTransactions",
+    values: [BigNumberish, BigNumberish, BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "initializeDepositTransaction",
@@ -132,6 +137,10 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "getTransactions",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "initializeDepositTransaction",
     data: BytesLike
   ): Result;
@@ -146,7 +155,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "ClientConfirmationEvent(tuple)": EventFragment;
     "ConfirmationCompletedEvent(tuple)": EventFragment;
     "TransactionCompletionEvent(tuple)": EventFragment;
-    "TransactionInitEvent(uint256,address)": EventFragment;
+    "TransactionInitEvent(tuple)": EventFragment;
   };
 
   getEvent(nameOrSignatureOrTopic: "AgentConfirmationEvent"): EventFragment;
@@ -478,7 +487,67 @@ export type TransactionCompletionEventEvent = TypedEvent<
 >;
 
 export type TransactionInitEventEvent = TypedEvent<
-  [BigNumber, string] & { wtxIndex: BigNumber; initiatorAddress: string }
+  [
+    [
+      BigNumber,
+      number,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      string,
+      string
+    ] & {
+      id: BigNumber;
+      txType: number;
+      clientAddress: string;
+      agentAddress: string;
+      status: number;
+      netAmount: BigNumber;
+      agentFee: BigNumber;
+      nashFee: BigNumber;
+      grossAmount: BigNumber;
+      agentApproval: boolean;
+      clientApproval: boolean;
+      agentPhoneNumber: string;
+      clientPhoneNumber: string;
+    }
+  ] & {
+    wtx: [
+      BigNumber,
+      number,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      string,
+      string
+    ] & {
+      id: BigNumber;
+      txType: number;
+      clientAddress: string;
+      agentAddress: string;
+      status: number;
+      netAmount: BigNumber;
+      agentFee: BigNumber;
+      nashFee: BigNumber;
+      grossAmount: BigNumber;
+      agentApproval: boolean;
+      clientApproval: boolean;
+      agentPhoneNumber: string;
+      clientPhoneNumber: string;
+    };
+  }
 >;
 
 export class NashEscrow extends BaseContract {
@@ -636,6 +705,45 @@ export class NashEscrow extends BaseContract {
       ]
     >;
 
+    getTransactions(
+      _paginationCount: BigNumberish,
+      _startingPoint: BigNumberish,
+      _status: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      [
+        ([
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPhoneNumber: string;
+          clientPhoneNumber: string;
+        })[]
+      ]
+    >;
+
     initializeDepositTransaction(
       _amount: BigNumberish,
       _phoneNumber: string,
@@ -754,6 +862,43 @@ export class NashEscrow extends BaseContract {
     }
   >;
 
+  getTransactions(
+    _paginationCount: BigNumberish,
+    _startingPoint: BigNumberish,
+    _status: BigNumberish,
+    overrides?: CallOverrides
+  ): Promise<
+    ([
+      BigNumber,
+      number,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      string,
+      string
+    ] & {
+      id: BigNumber;
+      txType: number;
+      clientAddress: string;
+      agentAddress: string;
+      status: number;
+      netAmount: BigNumber;
+      agentFee: BigNumber;
+      nashFee: BigNumber;
+      grossAmount: BigNumber;
+      agentApproval: boolean;
+      clientApproval: boolean;
+      agentPhoneNumber: string;
+      clientPhoneNumber: string;
+    })[]
+  >;
+
   initializeDepositTransaction(
     _amount: BigNumberish,
     _phoneNumber: string,
@@ -870,6 +1015,43 @@ export class NashEscrow extends BaseContract {
         agentPhoneNumber: string;
         clientPhoneNumber: string;
       }
+    >;
+
+    getTransactions(
+      _paginationCount: BigNumberish,
+      _startingPoint: BigNumberish,
+      _status: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<
+      ([
+        BigNumber,
+        number,
+        string,
+        string,
+        number,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        BigNumber,
+        boolean,
+        boolean,
+        string,
+        string
+      ] & {
+        id: BigNumber;
+        txType: number;
+        clientAddress: string;
+        agentAddress: string;
+        status: number;
+        netAmount: BigNumber;
+        agentFee: BigNumber;
+        nashFee: BigNumber;
+        grossAmount: BigNumber;
+        agentApproval: boolean;
+        clientApproval: boolean;
+        agentPhoneNumber: string;
+        clientPhoneNumber: string;
+      })[]
     >;
 
     initializeDepositTransaction(
@@ -1556,20 +1738,138 @@ export class NashEscrow extends BaseContract {
       }
     >;
 
-    "TransactionInitEvent(uint256,address)"(
-      wtxIndex?: null,
-      initiatorAddress?: null
+    "TransactionInitEvent(tuple)"(
+      wtx?: null
     ): TypedEventFilter<
-      [BigNumber, string],
-      { wtxIndex: BigNumber; initiatorAddress: string }
+      [
+        [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPhoneNumber: string;
+          clientPhoneNumber: string;
+        }
+      ],
+      {
+        wtx: [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPhoneNumber: string;
+          clientPhoneNumber: string;
+        };
+      }
     >;
 
     TransactionInitEvent(
-      wtxIndex?: null,
-      initiatorAddress?: null
+      wtx?: null
     ): TypedEventFilter<
-      [BigNumber, string],
-      { wtxIndex: BigNumber; initiatorAddress: string }
+      [
+        [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPhoneNumber: string;
+          clientPhoneNumber: string;
+        }
+      ],
+      {
+        wtx: [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPhoneNumber: string;
+          clientPhoneNumber: string;
+        };
+      }
     >;
   };
 
@@ -1616,6 +1916,13 @@ export class NashEscrow extends BaseContract {
 
     getTransactionByIndex(
       _transactionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    getTransactions(
+      _paginationCount: BigNumberish,
+      _startingPoint: BigNumberish,
+      _status: BigNumberish,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1679,6 +1986,13 @@ export class NashEscrow extends BaseContract {
 
     getTransactionByIndex(
       _transactionID: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    getTransactions(
+      _paginationCount: BigNumberish,
+      _startingPoint: BigNumberish,
+      _status: BigNumberish,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
