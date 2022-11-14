@@ -13,7 +13,7 @@
   "function countSuccessfulTransactions() view returns (uint256)",
   "function finalizeTransaction(uint256)",
   "function getAgentFee() view returns (uint256)",
-  "function getMyTransactions(uint256,uint256,uint8[]) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string)[])",
+  "function getMyTransactions(uint256,uint256,uint8[],address) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string)[])",
   "function getNashFee() view returns (uint256)",
   "function getNextTransactionIndex() view returns (uint256)",
   "function getNextUnpairedTransaction(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",

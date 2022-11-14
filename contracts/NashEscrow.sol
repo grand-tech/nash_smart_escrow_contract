@@ -490,7 +490,8 @@ contract NashEscrow {
     function getMyTransactions(
         uint256 _paginationCount,
         uint256 _startingPoint,
-        Status[] memory _status
+        Status[] memory _status,
+        address myAddress
     ) public view returns (NashTransaction[] memory) {
         uint256 startingPoint = _startingPoint;
         uint256 paginationCount = _paginationCount;
@@ -521,8 +522,8 @@ contract NashEscrow {
                 wtx = escrowedPayments[uint256(index)];
                 if (
                     isTxInStatus(wtx, _status) &&
-                    (wtx.clientAddress == msg.sender ||
-                        wtx.agentAddress == msg.sender)
+                    (wtx.clientAddress == myAddress ||
+                        wtx.agentAddress == myAddress)
                 ) {
                     transactions[uint256(i)] = wtx;
                     if (index > 0) {

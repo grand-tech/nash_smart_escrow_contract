@@ -29,7 +29,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "countSuccessfulTransactions()": FunctionFragment;
     "finalizeTransaction(uint256)": FunctionFragment;
     "getAgentFee()": FunctionFragment;
-    "getMyTransactions(uint256,uint256,uint8[])": FunctionFragment;
+    "getMyTransactions(uint256,uint256,uint8[],address)": FunctionFragment;
     "getNashFee()": FunctionFragment;
     "getNextTransactionIndex()": FunctionFragment;
     "getNextUnpairedTransaction(uint256)": FunctionFragment;
@@ -70,7 +70,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "getMyTransactions",
-    values: [BigNumberish, BigNumberish, BigNumberish[]]
+    values: [BigNumberish, BigNumberish, BigNumberish[], string]
   ): string;
   encodeFunctionData(
     functionFragment: "getNashFee",
@@ -666,6 +666,7 @@ export class NashEscrow extends BaseContract {
       _paginationCount: BigNumberish,
       _startingPoint: BigNumberish,
       _status: BigNumberish[],
+      myAddress: string,
       overrides?: CallOverrides
     ): Promise<
       [
@@ -886,6 +887,7 @@ export class NashEscrow extends BaseContract {
     _paginationCount: BigNumberish,
     _startingPoint: BigNumberish,
     _status: BigNumberish[],
+    myAddress: string,
     overrides?: CallOverrides
   ): Promise<
     ([
@@ -1098,6 +1100,7 @@ export class NashEscrow extends BaseContract {
       _paginationCount: BigNumberish,
       _startingPoint: BigNumberish,
       _status: BigNumberish[],
+      myAddress: string,
       overrides?: CallOverrides
     ): Promise<
       ([
@@ -2117,6 +2120,7 @@ export class NashEscrow extends BaseContract {
       _paginationCount: BigNumberish,
       _startingPoint: BigNumberish,
       _status: BigNumberish[],
+      myAddress: string,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -2212,6 +2216,7 @@ export class NashEscrow extends BaseContract {
       _paginationCount: BigNumberish,
       _startingPoint: BigNumberish,
       _status: BigNumberish[],
+      myAddress: string,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

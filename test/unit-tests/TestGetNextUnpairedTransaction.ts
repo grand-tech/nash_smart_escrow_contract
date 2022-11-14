@@ -226,7 +226,7 @@ describe("Test Get My transactions.", function () {
 
     const txs = await testUtil.nashEscrow
       .connect(testUtil.user2Address)
-      .getMyTransactions(5, 5, [1, 3, 2]);
+      .getMyTransactions(5, 5, [1, 3, 2], testUtil.user2Address.getAddress());
     expect(txs.length).equal(1);
 
     const nashTx = testUtil.convertToNashTransactionObj(
