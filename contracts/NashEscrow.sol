@@ -478,9 +478,90 @@ contract NashEscrow {
             NashTransaction memory wtx = transactions[i];
             if (wtx.clientAddress != address(0)) {
                 ts[i] = wtx;
-            } 
+            }
         }
         return ts;
+    }
+
+    /**
+     * Gets the next unpaired transaction from the map.
+     * @return the transaction in questsion.
+     */
+    function getMyTransactions(
+        uint256 _paginationCount,
+        uint256 _startingPoint,
+        Status[] memory _status
+    ) public view returns (NashTransaction[] memory) {
+        uint256 startingPoint = _startingPoint;
+        uint256 paginationCount = _paginationCount;
+
+        // prevent an extravagant loop.
+        if (startingPoint > nextTransactionID) {
+            startingPoint = nextTransactionID;
+        }
+
+        // prevent an extravagant loop.
+        if (_paginationCount > nextTransactionID) {
+            paginationCount = nextTransactionID;
+        }
+
+        if (_paginationCount > 15) {
+            paginationCount = 15;
+        }
+        NashTransaction[] memory transactions = new NashTransaction[](
+            paginationCount
+        );
+
+        uint256 transactionCounter = 0;
+        for (uint256 i = 0; i < paginationCount; i++) {
+            NashTransaction memory wtx;
+            // Loop through the transactions map by index.
+            bool updated = false;
+            for (int256 index = int256(startingPoint); index >= 0; index--) {
+                wtx = escrowedPayments[uint256(index)];
+                if (
+                    isTxInStatus(wtx, _status) &&
+                    (wtx.clientAddress == msg.sender ||
+                        wtx.agentAddress == msg.sender)
+                ) {
+                    transactions[uint256(i)] = wtx;
+                    if (index > 0) {
+                        startingPoint = uint256(index) - 1;
+                    }
+                    // prevent another parent loop after zero
+                    updated = index != 0;
+                    transactionCounter++;
+                    break;
+                }
+            }
+            if (!updated) {
+                break;
+            }
+        }
+
+        NashTransaction[] memory ts = new NashTransaction[](transactionCounter);
+
+        for (uint256 i = 0; i < transactions.length; i++) {
+            NashTransaction memory wtx = transactions[i];
+            if (wtx.clientAddress != address(0)) {
+                ts[i] = wtx;
+            }
+        }
+
+        return ts;
+    }
+
+    function isTxInStatus(NashTransaction memory wtx, Status[] memory _status)
+        public
+        pure
+        returns (bool)
+    {
+        for (uint256 i = 0; i < _status.length; i++) {
+            if (wtx.status == _status[i]) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

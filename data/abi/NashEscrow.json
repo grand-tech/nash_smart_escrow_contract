@@ -13,11 +13,13 @@
   "function countSuccessfulTransactions() view returns (uint256)",
   "function finalizeTransaction(uint256)",
   "function getAgentFee() view returns (uint256)",
+  "function getMyTransactions(uint256,uint256,uint8[]) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string)[])",
   "function getNashFee() view returns (uint256)",
   "function getNextTransactionIndex() view returns (uint256)",
   "function getNextUnpairedTransaction(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "function getTransactionByIndex(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string))",
   "function getTransactions(uint256,uint256,uint8) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string)[])",
   "function initializeDepositTransaction(uint256,string)",
-  "function initializeWithdrawalTransaction(uint256,string) payable"
+  "function initializeWithdrawalTransaction(uint256,string) payable",
+  "function isTxInStatus(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string),uint8[]) pure returns (bool)"
 ]
