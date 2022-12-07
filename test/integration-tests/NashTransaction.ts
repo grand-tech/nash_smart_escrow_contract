@@ -14,8 +14,6 @@ describe("Withdrawal E2E", function () {
     const clientAddress = await clientSigner.getAddress();
 
     await testUtil.cUSD.approve(testUtil.nashEscrow.address, 10);
-
-    console.log(testUtil.cUSD.address);
     expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
 
     let agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
@@ -25,7 +23,7 @@ describe("Withdrawal E2E", function () {
     expect(
       await testUtil.nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, "test phone number")
+        .initializeDepositTransaction(5)
     )
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
@@ -49,6 +47,19 @@ describe("Withdrawal E2E", function () {
         testUtil.user2Address.getAddress()
       );
 
+    // Client write comment. i.e after comment encrypotion on the front end.
+    expect(
+      await testUtil.nashEscrow
+        .connect(clientSigner)
+        .clientWritePaymentInformation(0, "test client number")
+    )
+      .to.emit("NashEscrow", "SavedClientCommentEvent")
+      .withArgs(
+        0,
+        testUtil.user1Address.getAddress(),
+        testUtil.user2Address.getAddress()
+      );
+    ;
     // Check balances after method call.
     agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
     clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
@@ -99,7 +110,6 @@ describe("Withdrawal E2E", function () {
         .connect(testUtil.user2Address)
         .getTransactionByIndex(0)
     );
-    console.log(tx2);
     expect(tx2.id).equal(0);
     expect(tx2.status).equal(4);
   });

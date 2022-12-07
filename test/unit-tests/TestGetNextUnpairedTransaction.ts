@@ -10,39 +10,19 @@ describe("Test Get Next un-paired transaction.", function () {
 
     expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeWithdrawalTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeWithdrawalTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
@@ -79,39 +59,19 @@ describe("Test Get transactions.", function () {
 
     expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeWithdrawalTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeWithdrawalTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
@@ -146,39 +106,19 @@ describe("Test Get My transactions.", function () {
 
     expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeDepositTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeDepositTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
-    expect(
-      await testUtil.nashEscrow.initializeWithdrawalTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeWithdrawalTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
@@ -191,12 +131,7 @@ describe("Test Get My transactions.", function () {
       .withArgs(4, testUtil.user2Address.getAddress());
 
     // Test get my transactions
-    expect(
-      await testUtil.nashEscrow.initializeWithdrawalTransaction(
-        5,
-        "test phone number"
-      )
-    )
+    expect(await testUtil.nashEscrow.initializeWithdrawalTransaction(5))
       .to.emit("NashEscrow", "TransactionInitEvent")
       .withArgs(0, testUtil.user1Address.getAddress());
 
