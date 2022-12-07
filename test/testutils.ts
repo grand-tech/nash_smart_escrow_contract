@@ -15,7 +15,7 @@ import { ethers } from "hardhat";
  * @property { number } agentFee - the amount of money/crypto levied by the agent.
  * @property { boolean } agentApproval - true on agents approval.
  * @property { boolean } clientApproval - true on clients approval.
- * @property { string } clientPhoneNumber - the client`s phone number.
+ * @property { string } clientPaymentDetails - the client`s phone number.
  * @property { string } agentPhoneNumber - the agent`s phone number.
  */
 export type NashEscrowTransaction = {
@@ -30,8 +30,8 @@ export type NashEscrowTransaction = {
   agentFee: number;
   agentApproval: string;
   clientApproval: string;
-  clientPhoneNumber: string;
-  agentPhoneNumber: string;
+  clientPaymentDetails: string;
+  agentPaymentDetails: string;
 };
 
 export class TestUtil {
@@ -87,8 +87,8 @@ export class TestUtil {
       grossAmount: parseInt(tx[8]),
       agentApproval: tx[9],
       clientApproval: tx[10],
-      agentPhoneNumber: Buffer.from(tx[11], "base64").toString("ascii"),
-      clientPhoneNumber: Buffer.from(tx[12], "base64").toString("ascii"),
+      agentPaymentDetails: Buffer.from(tx[11], "base64").toString("ascii"),
+      clientPaymentDetails: Buffer.from(tx[12], "base64").toString("ascii"),
     };
 
     return nashTx;

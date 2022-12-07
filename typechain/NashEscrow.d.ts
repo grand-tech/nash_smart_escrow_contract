@@ -26,6 +26,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "agentAcceptWithdrawalTransaction(uint256,string)": FunctionFragment;
     "agentConfirmPayment(uint256)": FunctionFragment;
     "clientConfirmPayment(uint256)": FunctionFragment;
+    "clientWritePaymentInformation(uint256,string)": FunctionFragment;
     "countSuccessfulTransactions()": FunctionFragment;
     "finalizeTransaction(uint256)": FunctionFragment;
     "getAgentFee()": FunctionFragment;
@@ -35,8 +36,8 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "getNextUnpairedTransaction(uint256)": FunctionFragment;
     "getTransactionByIndex(uint256)": FunctionFragment;
     "getTransactions(uint256,uint256,uint8)": FunctionFragment;
-    "initializeDepositTransaction(uint256,string)": FunctionFragment;
-    "initializeWithdrawalTransaction(uint256,string)": FunctionFragment;
+    "initializeDepositTransaction(uint256)": FunctionFragment;
+    "initializeWithdrawalTransaction(uint256)": FunctionFragment;
     "isTxInStatus((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string),uint8[])": FunctionFragment;
   };
 
@@ -55,6 +56,10 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   encodeFunctionData(
     functionFragment: "clientConfirmPayment",
     values: [BigNumberish]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "clientWritePaymentInformation",
+    values: [BigNumberish, string]
   ): string;
   encodeFunctionData(
     functionFragment: "countSuccessfulTransactions",
@@ -94,11 +99,11 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializeDepositTransaction",
-    values: [BigNumberish, string]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "initializeWithdrawalTransaction",
-    values: [BigNumberish, string]
+    values: [BigNumberish]
   ): string;
   encodeFunctionData(
     functionFragment: "isTxInStatus",
@@ -115,8 +120,8 @@ interface NashEscrowInterface extends ethers.utils.Interface {
         grossAmount: BigNumberish;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       },
       BigNumberish[]
     ]
@@ -136,6 +141,10 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "clientConfirmPayment",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "clientWritePaymentInformation",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -189,6 +198,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
     "AgentPairingEvent(tuple)": EventFragment;
     "ClientConfirmationEvent(tuple)": EventFragment;
     "ConfirmationCompletedEvent(tuple)": EventFragment;
+    "SavedClientCommentEvent(tuple)": EventFragment;
     "TransactionCompletionEvent(tuple)": EventFragment;
     "TransactionInitEvent(tuple)": EventFragment;
   };
@@ -197,6 +207,7 @@ interface NashEscrowInterface extends ethers.utils.Interface {
   getEvent(nameOrSignatureOrTopic: "AgentPairingEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ClientConfirmationEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "ConfirmationCompletedEvent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "SavedClientCommentEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransactionCompletionEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransactionInitEvent"): EventFragment;
 }
@@ -229,8 +240,8 @@ export type AgentConfirmationEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -259,8 +270,8 @@ export type AgentConfirmationEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -293,8 +304,8 @@ export type AgentPairingEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -323,8 +334,8 @@ export type AgentPairingEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -357,8 +368,8 @@ export type ClientConfirmationEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -387,8 +398,8 @@ export type ClientConfirmationEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -421,8 +432,8 @@ export type ConfirmationCompletedEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -451,8 +462,72 @@ export type ConfirmationCompletedEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
+    };
+  }
+>;
+
+export type SavedClientCommentEventEvent = TypedEvent<
+  [
+    [
+      BigNumber,
+      number,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      string,
+      string
+    ] & {
+      id: BigNumber;
+      txType: number;
+      clientAddress: string;
+      agentAddress: string;
+      status: number;
+      netAmount: BigNumber;
+      agentFee: BigNumber;
+      nashFee: BigNumber;
+      grossAmount: BigNumber;
+      agentApproval: boolean;
+      clientApproval: boolean;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
+    }
+  ] & {
+    wtx: [
+      BigNumber,
+      number,
+      string,
+      string,
+      number,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      BigNumber,
+      boolean,
+      boolean,
+      string,
+      string
+    ] & {
+      id: BigNumber;
+      txType: number;
+      clientAddress: string;
+      agentAddress: string;
+      status: number;
+      netAmount: BigNumber;
+      agentFee: BigNumber;
+      nashFee: BigNumber;
+      grossAmount: BigNumber;
+      agentApproval: boolean;
+      clientApproval: boolean;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -485,8 +560,8 @@ export type TransactionCompletionEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -515,8 +590,8 @@ export type TransactionCompletionEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -549,8 +624,8 @@ export type TransactionInitEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   ] & {
     wtx: [
@@ -579,8 +654,8 @@ export type TransactionInitEventEvent = TypedEvent<
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     };
   }
 >;
@@ -631,13 +706,13 @@ export class NashEscrow extends BaseContract {
   functions: {
     agentAcceptDepositTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     agentAcceptWithdrawalTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -648,6 +723,12 @@ export class NashEscrow extends BaseContract {
 
     clientConfirmPayment(
       _transactionid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+
+    clientWritePaymentInformation(
+      _transactionid: BigNumberish,
+      _comment: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -696,8 +777,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         })[]
       ]
     >;
@@ -737,8 +818,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ]
     >;
@@ -774,8 +855,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ]
     >;
@@ -813,21 +894,19 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         })[]
       ]
     >;
 
     initializeDepositTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<ContractTransaction>;
 
@@ -844,8 +923,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumberish;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       },
       _status: BigNumberish[],
       overrides?: CallOverrides
@@ -854,13 +933,13 @@ export class NashEscrow extends BaseContract {
 
   agentAcceptDepositTransaction(
     _transactionid: BigNumberish,
-    _phoneNumber: string,
+    _paymentDetails: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   agentAcceptWithdrawalTransaction(
     _transactionid: BigNumberish,
-    _phoneNumber: string,
+    _paymentDetails: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -871,6 +950,12 @@ export class NashEscrow extends BaseContract {
 
   clientConfirmPayment(
     _transactionid: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
+
+  clientWritePaymentInformation(
+    _transactionid: BigNumberish,
+    _comment: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -916,8 +1001,8 @@ export class NashEscrow extends BaseContract {
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     })[]
   >;
 
@@ -955,8 +1040,8 @@ export class NashEscrow extends BaseContract {
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   >;
 
@@ -990,8 +1075,8 @@ export class NashEscrow extends BaseContract {
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     }
   >;
 
@@ -1027,20 +1112,18 @@ export class NashEscrow extends BaseContract {
       grossAmount: BigNumber;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     })[]
   >;
 
   initializeDepositTransaction(
     _amount: BigNumberish,
-    _phoneNumber: string,
     overrides?: Overrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
   initializeWithdrawalTransaction(
     _amount: BigNumberish,
-    _phoneNumber: string,
     overrides?: PayableOverrides & { from?: string | Promise<string> }
   ): Promise<ContractTransaction>;
 
@@ -1057,8 +1140,8 @@ export class NashEscrow extends BaseContract {
       grossAmount: BigNumberish;
       agentApproval: boolean;
       clientApproval: boolean;
-      agentPhoneNumber: string;
-      clientPhoneNumber: string;
+      agentPaymentDetails: string;
+      clientPaymentDetails: string;
     },
     _status: BigNumberish[],
     overrides?: CallOverrides
@@ -1067,13 +1150,13 @@ export class NashEscrow extends BaseContract {
   callStatic: {
     agentAcceptDepositTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     agentAcceptWithdrawalTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1084,6 +1167,12 @@ export class NashEscrow extends BaseContract {
 
     clientConfirmPayment(
       _transactionid: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    clientWritePaymentInformation(
+      _transactionid: BigNumberish,
+      _comment: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1129,8 +1218,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumber;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       })[]
     >;
 
@@ -1168,8 +1257,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumber;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       }
     >;
 
@@ -1203,8 +1292,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumber;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       }
     >;
 
@@ -1240,20 +1329,18 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumber;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       })[]
     >;
 
     initializeDepositTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
     initializeWithdrawalTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -1270,8 +1357,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumberish;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       },
       _status: BigNumberish[],
       overrides?: CallOverrides
@@ -1309,8 +1396,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1340,8 +1427,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1376,8 +1463,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1407,8 +1494,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1443,8 +1530,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1474,8 +1561,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1510,8 +1597,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1541,8 +1628,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1577,8 +1664,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1608,8 +1695,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1644,8 +1731,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1675,8 +1762,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1711,8 +1798,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1742,8 +1829,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1778,8 +1865,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1809,8 +1896,142 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
+        };
+      }
+    >;
+
+    "SavedClientCommentEvent(tuple)"(
+      wtx?: null
+    ): TypedEventFilter<
+      [
+        [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
+        }
+      ],
+      {
+        wtx: [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
+        };
+      }
+    >;
+
+    SavedClientCommentEvent(
+      wtx?: null
+    ): TypedEventFilter<
+      [
+        [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
+        }
+      ],
+      {
+        wtx: [
+          BigNumber,
+          number,
+          string,
+          string,
+          number,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          BigNumber,
+          boolean,
+          boolean,
+          string,
+          string
+        ] & {
+          id: BigNumber;
+          txType: number;
+          clientAddress: string;
+          agentAddress: string;
+          status: number;
+          netAmount: BigNumber;
+          agentFee: BigNumber;
+          nashFee: BigNumber;
+          grossAmount: BigNumber;
+          agentApproval: boolean;
+          clientApproval: boolean;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1845,8 +2066,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1876,8 +2097,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1912,8 +2133,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -1943,8 +2164,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -1979,8 +2200,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -2010,8 +2231,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -2046,8 +2267,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         }
       ],
       {
@@ -2077,8 +2298,8 @@ export class NashEscrow extends BaseContract {
           grossAmount: BigNumber;
           agentApproval: boolean;
           clientApproval: boolean;
-          agentPhoneNumber: string;
-          clientPhoneNumber: string;
+          agentPaymentDetails: string;
+          clientPaymentDetails: string;
         };
       }
     >;
@@ -2087,13 +2308,13 @@ export class NashEscrow extends BaseContract {
   estimateGas: {
     agentAcceptDepositTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     agentAcceptWithdrawalTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2104,6 +2325,12 @@ export class NashEscrow extends BaseContract {
 
     clientConfirmPayment(
       _transactionid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+
+    clientWritePaymentInformation(
+      _transactionid: BigNumberish,
+      _comment: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2147,13 +2374,11 @@ export class NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
     initializeWithdrawalTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<BigNumber>;
 
@@ -2170,8 +2395,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumberish;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       },
       _status: BigNumberish[],
       overrides?: CallOverrides
@@ -2181,13 +2406,13 @@ export class NashEscrow extends BaseContract {
   populateTransaction: {
     agentAcceptDepositTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     agentAcceptWithdrawalTransaction(
       _transactionid: BigNumberish,
-      _phoneNumber: string,
+      _paymentDetails: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2198,6 +2423,12 @@ export class NashEscrow extends BaseContract {
 
     clientConfirmPayment(
       _transactionid: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+
+    clientWritePaymentInformation(
+      _transactionid: BigNumberish,
+      _comment: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2245,13 +2476,11 @@ export class NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: Overrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: BigNumberish,
-      _phoneNumber: string,
       overrides?: PayableOverrides & { from?: string | Promise<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -2268,8 +2497,8 @@ export class NashEscrow extends BaseContract {
         grossAmount: BigNumberish;
         agentApproval: boolean;
         clientApproval: boolean;
-        agentPhoneNumber: string;
-        clientPhoneNumber: string;
+        agentPaymentDetails: string;
+        clientPaymentDetails: string;
       },
       _status: BigNumberish[],
       overrides?: CallOverrides

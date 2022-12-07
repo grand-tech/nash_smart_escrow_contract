@@ -31,6 +31,8 @@ contract NashEscrow {
 
     event TransactionCompletionEvent(NashTransaction wtx);
 
+    event SavedClientCommentEvent(NashTransaction wtx);
+
     /**
      * Holds the nash treasury address funds. Default account for alfajores test net.
      */
@@ -85,8 +87,8 @@ contract NashEscrow {
         uint256 grossAmount;
         bool agentApproval;
         bool clientApproval;
-        string agentPhoneNumber;
-        string clientPhoneNumber;
+        string agentPaymentDetails;
+        string clientPaymentDetails;
     }
 
     /**
@@ -150,12 +152,8 @@ contract NashEscrow {
     /**
      * Client initialize withdrawal transaction.
      * @param _amount the amount to be withdrawn.
-     * @param _phoneNumber the client`s phone number.
      **/
-    function initializeWithdrawalTransaction(
-        uint256 _amount,
-        string calldata _phoneNumber
-    ) public payable {
+    function initializeWithdrawalTransaction(uint256 _amount) public payable {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
@@ -172,7 +170,6 @@ contract NashEscrow {
         newPayment.nashFee = nashFee;
         newPayment.grossAmount = grossAmount;
         newPayment.status = Status.AWAITING_AGENT;
-        newPayment.clientPhoneNumber = _phoneNumber;
 
         // newPayment.clientPhoneNo = keccak256(abi.encodePacked(_phoneNumber, encryptionKey));
         newPayment.agentApproval = false;
@@ -190,12 +187,8 @@ contract NashEscrow {
     /**
      * Client initialize deposit transaction.
      * @param _amount the amount to be deposited.
-     * @param _phoneNumber the client`s phone number.
      **/
-    function initializeDepositTransaction(
-        uint256 _amount,
-        string calldata _phoneNumber
-    ) public {
+    function initializeDepositTransaction(uint256 _amount) public {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
@@ -213,7 +206,6 @@ contract NashEscrow {
         newPayment.nashFee = nashFee;
         newPayment.grossAmount = grossAmount;
         newPayment.status = Status.AWAITING_AGENT;
-        newPayment.clientPhoneNumber = _phoneNumber;
 
         // newPayment.clientPhoneNo = keccak256(abi.encodePacked(_phoneNumber, encryptionKey));
         newPayment.agentApproval = false;
@@ -223,13 +215,28 @@ contract NashEscrow {
     }
 
     /**
+     * Writes the encrypted client information inot the smart contract.
+     * @param _transactionid the transaction id.
+     * @param _comment the encrypted comment.
+     */
+    function clientWritePaymentInformation(
+        uint256 _transactionid,
+        string calldata _comment
+    ) public clientOnly(_transactionid) awaitConfirmation(_transactionid) {
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
+        wtx.clientPaymentDetails = _comment;
+
+        emit SavedClientCommentEvent(wtx);
+    }
+
+    /**
      * Marks pairs the client to an agent to attent to the transaction.
      * @param _transactionid the identifire of the transaction.
-     * @param _phoneNumber the agents phone number.
+     * @param _paymentDetails the agents phone number.
      */
     function agentAcceptWithdrawalTransaction(
         uint256 _transactionid,
-        string calldata _phoneNumber
+        string calldata _paymentDetails
     )
         public
         awaitAgent(_transactionid)
@@ -240,7 +247,7 @@ contract NashEscrow {
 
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
-        wtx.agentPhoneNumber = _phoneNumber;
+        wtx.agentPaymentDetails = _paymentDetails;
 
         emit AgentPairingEvent(wtx);
     }
@@ -248,11 +255,11 @@ contract NashEscrow {
     /**
      * Marks pairs the client to an agent to attent to the transaction.
      * @param _transactionid the identifire of the transaction.
-     * @param _phoneNumber the agents phone number.
+     * @param _paymentDetails the agents phone number.
      */
     function agentAcceptDepositTransaction(
         uint256 _transactionid,
-        string calldata _phoneNumber
+        string calldata _paymentDetails
     )
         public
         payable
@@ -274,18 +281,16 @@ contract NashEscrow {
             ),
             "You don't have enough cUSD to accept this request."
         );
-        wtx.agentPhoneNumber = _phoneNumber;
+        wtx.agentPaymentDetails = _paymentDetails;
         emit AgentPairingEvent(wtx);
     }
 
     /**
      * Client confirms that s/he has sent money to the agent.
      */
-    function clientConfirmPayment(uint256 _transactionid)
-        public
-        awaitConfirmation(_transactionid)
-        clientOnly(_transactionid)
-    {
+    function clientConfirmPayment(
+        uint256 _transactionid
+    ) public awaitConfirmation(_transactionid) clientOnly(_transactionid) {
         NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         require(!wtx.clientApproval, "Client already confirmed payment!!");
@@ -303,11 +308,9 @@ contract NashEscrow {
     /**
      * Agent comnfirms that the payment  has been made.
      */
-    function agentConfirmPayment(uint256 _transactionid)
-        public
-        awaitConfirmation(_transactionid)
-        agentOnly(_transactionid)
-    {
+    function agentConfirmPayment(
+        uint256 _transactionid
+    ) public awaitConfirmation(_transactionid) agentOnly(_transactionid) {
         NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         require(!wtx.agentApproval, "Agent already confirmed payment!!");
@@ -374,11 +377,9 @@ contract NashEscrow {
      * @param _transactionID the transaction id.
      * @return the transaction in questsion.
      */
-    function getTransactionByIndex(uint256 _transactionID)
-        public
-        view
-        returns (NashTransaction memory)
-    {
+    function getTransactionByIndex(
+        uint256 _transactionID
+    ) public view returns (NashTransaction memory) {
         NashTransaction memory wtx = escrowedPayments[_transactionID];
         return wtx;
     }
@@ -388,11 +389,9 @@ contract NashEscrow {
      * @param _transactionID the transaction id.
      * @return the transaction in questsion.
      */
-    function getNextUnpairedTransaction(uint256 _transactionID)
-        public
-        view
-        returns (NashTransaction memory)
-    {
+    function getNextUnpairedTransaction(
+        uint256 _transactionID
+    ) public view returns (NashTransaction memory) {
         uint256 transactionID = _transactionID;
         NashTransaction storage wtx;
 
@@ -552,11 +551,10 @@ contract NashEscrow {
         return ts;
     }
 
-    function isTxInStatus(NashTransaction memory wtx, Status[] memory _status)
-        public
-        pure
-        returns (bool)
-    {
+    function isTxInStatus(
+        NashTransaction memory wtx,
+        Status[] memory _status
+    ) public pure returns (bool) {
         for (uint256 i = 0; i < _status.length; i++) {
             if (wtx.status == _status[i]) {
                 return true;
