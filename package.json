@@ -1,5 +1,5 @@
 {
-  "name": "kukuza-contracts",
+  "name": "Allen-Muhani-contracts",
   "version": "1.0.0",
   "description": "### Requisite knowledge. - Understanding of truffle.     http://trufflesuite.com/docs/truffle/index.html",
   "main": "index.js",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Kukuza/kukuza-contracts-monorepo.git"
+    "url": "git+https://github.com/Allen-Muhani/nash_smart_contracts.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Kukuza/kukuza-contracts-monorepo/issues"
+    "url": "https://github.com/Allen-Muhani/nash_smart_contracts/issues"
   },
-  "homepage": "https://github.com/Kukuza/kukuza-contracts-monorepo#readme",
+  "homepage": "https://github.com/Allen-Muhani/nash_smart_contracts#readme",
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.2.1",
     "@nomiclabs/hardhat-etherscan": "^3.0.3",
