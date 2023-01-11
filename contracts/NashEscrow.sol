@@ -3,21 +3,17 @@
 pragma solidity ^0.8.4;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "hardhat/console.sol";
 
-contract NashEscrow {
-    /**
-     * Encription keys used to enxcrypt phone numbers.
-     **/
-    string private encryptionKey;
+contract NashEscrow is Initializable, OwnableUpgradeable {
+    uint256 private nextTransactionID;
 
-    uint256 private nextTransactionID = 0;
+    uint256 private agentFee;
 
-    uint256 private agentFee = 50000000000000000;
+    uint256 private nashFee;
 
-    uint256 private nashFee = 40000000000000000;
-
-    uint256 private successfulTransactionsCounter = 0;
+    uint256 private successfulTransactionsCounter;
 
     event AgentPairingEvent(NashTransaction wtx);
 
@@ -36,14 +32,7 @@ contract NashEscrow {
     /**
      * Holds the nash treasury address funds. Default account for alfajores test net.
      */
-    address internal nashTreasuryAddress =
-        0xfF096016A3B65cdDa688a8f7237Ac94f3EFBa245;
-
-    /**
-     * Address of the cUSD (default token on Alfajores).
-     */
-    address internal cUsdTokenAddress =
-        0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
+    address internal nashTreasuryAddress;
 
     // Maps unique payment IDs to escrowed payments.
     // These payment IDs are the temporary wallet addresses created with the escrowed payments.
@@ -89,21 +78,26 @@ contract NashEscrow {
         bool clientApproval;
         string agentPaymentDetails;
         string clientPaymentDetails;
+        address enxchangeToken;
+    }
+
+    /**
+     * Updates the nash treasury address.
+     */
+    function setNashTreasury(address _newTreasuryAddress) public onlyOwner {
+        nashTreasuryAddress = _newTreasuryAddress;
     }
 
     /**
      * Constructor.
      */
-    constructor(
-        address _cUSDTokenAddress,
-        uint256 _agentFee,
-        uint256 _nashFee,
-        address _nashTreasuryAddress
-    ) {
-        // Allow for default value.
-        if (_cUSDTokenAddress != address(0)) {
-            cUsdTokenAddress = _cUSDTokenAddress;
-        }
+    function initialize(
+        address _nashTreasuryAddress,
+        uint256 _nashFees,
+        uint256 _agentFees
+    ) external initializer {
+        __Context_init_unchained();
+        __Ownable_init_unchained();
 
         // Allow for default value.
         if (_nashTreasuryAddress != address(0)) {
@@ -111,13 +105,17 @@ contract NashEscrow {
         }
 
         // Allow for default value.
-        if (_agentFee > 0) {
-            agentFee = _agentFee;
+        if (_agentFees > 0) {
+            agentFee = _agentFees;
         }
 
         // Allow for default value.
-        if (_nashFee > 0) {
-            nashFee = _nashFee;
+        if (_nashFees > 0) {
+            nashFee = _nashFees;
+        }
+
+        if (nextTransactionID < 1) {
+            nextTransactionID = 0;
         }
     }
 
@@ -129,10 +127,26 @@ contract NashEscrow {
     }
 
     /**
+     * Sets the Nash fees on the smart contract.
+     * @param _nashFees .
+     */
+    function setNashFees(uint256 _nashFees) public onlyOwner {
+        nashFee = _nashFees;
+    }
+
+    /**
      * Get the agent fees from the smart contract.
      */
     function getAgentFee() public view returns (uint256) {
         return agentFee;
+    }
+
+    /**
+     * Sets the agents fees on the smart contract.
+     * @param _agentFees .
+     */
+    function setAgentFees(uint256 _agentFees) public onlyOwner {
+        nashFee = _agentFees;
     }
 
     /**
@@ -153,7 +167,10 @@ contract NashEscrow {
      * Client initialize withdrawal transaction.
      * @param _amount the amount to be withdrawn.
      **/
-    function initializeWithdrawalTransaction(uint256 _amount) public payable {
+    function initializeWithdrawalTransaction(
+        uint256 _amount,
+        address _exchangeToken
+    ) public payable {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
@@ -171,11 +188,11 @@ contract NashEscrow {
         newPayment.grossAmount = grossAmount;
         newPayment.status = Status.AWAITING_AGENT;
 
-        // newPayment.clientPhoneNo = keccak256(abi.encodePacked(_phoneNumber, encryptionKey));
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
+        newPayment.enxchangeToken = _exchangeToken;
 
-        ERC20(cUsdTokenAddress).transferFrom(
+        ERC20(_exchangeToken).transferFrom(
             msg.sender,
             address(this),
             grossAmount
@@ -207,7 +224,6 @@ contract NashEscrow {
         newPayment.grossAmount = grossAmount;
         newPayment.status = Status.AWAITING_AGENT;
 
-        // newPayment.clientPhoneNo = keccak256(abi.encodePacked(_phoneNumber, encryptionKey));
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
 
@@ -274,7 +290,7 @@ contract NashEscrow {
         wtx.status = Status.AWAITING_CONFIRMATIONS;
 
         require(
-            ERC20(cUsdTokenAddress).transferFrom(
+            ERC20(wtx.enxchangeToken).transferFrom(
                 msg.sender,
                 address(this),
                 wtx.grossAmount
@@ -341,11 +357,14 @@ contract NashEscrow {
         );
 
         if (wtx.txType == TransactionType.DEPOSIT) {
-            ERC20(cUsdTokenAddress).transfer(wtx.clientAddress, wtx.netAmount);
+            ERC20(wtx.enxchangeToken).transfer(
+                wtx.clientAddress,
+                wtx.netAmount
+            );
         } else {
             // Transafer the amount to the agent address.
             require(
-                ERC20(cUsdTokenAddress).transfer(
+                ERC20(wtx.enxchangeToken).transfer(
                     wtx.agentAddress,
                     wtx.netAmount
                 ),
@@ -355,13 +374,16 @@ contract NashEscrow {
 
         // Transafer the agents fees to the agents address.
         require(
-            ERC20(cUsdTokenAddress).transfer(wtx.agentAddress, wtx.agentFee),
+            ERC20(wtx.enxchangeToken).transfer(wtx.agentAddress, wtx.agentFee),
             "Agent fee transfer failed."
         );
 
         // Transafer the agents total (amount + agent fees)
         require(
-            ERC20(cUsdTokenAddress).transfer(nashTreasuryAddress, wtx.nashFee),
+            ERC20(wtx.enxchangeToken).transfer(
+                nashTreasuryAddress,
+                wtx.nashFee
+            ),
             "Transaction fee transfer failed."
         );
 
@@ -660,7 +682,7 @@ contract NashEscrow {
     modifier balanceGreaterThanAmount(uint256 _transactionid) {
         NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
-            ERC20(cUsdTokenAddress).balanceOf(address(msg.sender)) >
+            ERC20(wtx.enxchangeToken).balanceOf(address(msg.sender)) >
                 wtx.grossAmount,
             "Your balance must be greater than the transaction gross amount."
         );
