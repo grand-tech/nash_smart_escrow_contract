@@ -82,7 +82,7 @@ contract cUSD {
         string memory tokenName,
         uint8 decimalUnits,
         string memory tokenSymbol
-    ) public {
+    ) {
         balanceOf[msg.sender] = initialSupply;
         totalSupply = initialSupply;
         name = tokenName;
