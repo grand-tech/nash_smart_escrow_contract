@@ -6,7 +6,7 @@ import "@nomicfoundation/hardhat-chai-matchers";
 import "@nomiclabs/hardhat-ethers";
 import "@typechain/hardhat";
 import "hardhat-gas-reporter";
-// import "solidity-coverage";
+// import "solidity-coverage"; TODO: figure out how to report coverage
 import "hardhat-abi-exporter";
 import "hardhat-celo";
 import "@openzeppelin/hardhat-upgrades";
