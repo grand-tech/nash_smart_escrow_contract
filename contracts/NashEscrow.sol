@@ -130,7 +130,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * Sets the Nash fees on the smart contract.
      * @param _nashFees .
      */
-    function setNashFees(uint256 _nashFees) public onlyOwner {
+    function updateNashFees(uint256 _nashFees) public onlyOwner {
         nashFee = _nashFees;
     }
 
@@ -145,7 +145,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * Sets the agents fees on the smart contract.
      * @param _agentFees .
      */
-    function setAgentFees(uint256 _agentFees) public onlyOwner {
+    function updateAgentFees(uint256 _agentFees) public onlyOwner {
         nashFee = _agentFees;
     }
 
