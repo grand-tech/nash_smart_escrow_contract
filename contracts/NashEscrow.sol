@@ -36,7 +36,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
     // Maps unique payment IDs to escrowed payments.
     // These payment IDs are the temporary wallet addresses created with the escrowed payments.
-    mapping(uint256 => NashTransaction) private escrowedTransactions;
+    mapping(uint256 => NashTransaction) private escrowedPayments;
 
     /**
      * An enum of the transaction types. either deposit or withdrawal.
@@ -177,7 +177,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         nextTransactionID++;
 
         uint256 grossAmount = _amount;
-        NashTransaction storage newPayment = escrowedTransactions[wtxID];
+        NashTransaction storage newPayment = escrowedPayments[wtxID];
 
         newPayment.clientAddress = msg.sender;
         newPayment.id = wtxID;
@@ -215,7 +215,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         uint256 wtxID = nextTransactionID;
         nextTransactionID++;
 
-        NashTransaction storage newPayment = escrowedTransactions[wtxID];
+        NashTransaction storage newPayment = escrowedPayments[wtxID];
 
         uint256 grossAmount = _amount;
 
@@ -244,7 +244,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         uint256 _transactionid,
         string calldata _comment
     ) public clientOnly(_transactionid) awaitConfirmation(_transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         wtx.clientPaymentDetails = _comment;
 
         emit SavedClientCommentEvent(wtx);
@@ -264,7 +264,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         withdrawalsOnly(_transactionid)
         nonClientOnly(_transactionid)
     {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
@@ -289,7 +289,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         nonClientOnly(_transactionid)
         balanceGreaterThanAmount(_transactionid)
     {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
@@ -312,7 +312,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function clientConfirmPayment(
         uint256 _transactionid
     ) public awaitConfirmation(_transactionid) clientOnly(_transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         require(!wtx.clientApproval, "Client already confirmed payment!!");
         wtx.clientApproval = true;
@@ -332,7 +332,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function agentConfirmPayment(
         uint256 _transactionid
     ) public awaitConfirmation(_transactionid) agentOnly(_transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
 
         require(!wtx.agentApproval, "Agent already confirmed payment!!");
         wtx.agentApproval = true;
@@ -350,7 +350,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * Can be automated in the frontend by use of event listeners. eg on confirmation event.
      **/
     function finalizeTransaction(uint256 _transactionid) public {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             wtx.clientAddress == msg.sender || wtx.agentAddress == msg.sender,
             "Only the involved parties can finalize the transaction.!!"
@@ -407,7 +407,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function getTransactionByIndex(
         uint256 _transactionID
     ) public view returns (NashTransaction memory) {
-        NashTransaction memory wtx = escrowedTransactions[_transactionID];
+        NashTransaction memory wtx = escrowedPayments[_transactionID];
         return wtx;
     }
 
@@ -429,7 +429,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         // Loop through the transactions map by index.
         for (int256 index = int256(transactionID); index >= 0; index--) {
-            wtx = escrowedTransactions[uint256(index)];
+            wtx = escrowedPayments[uint256(index)];
 
             if (
                 wtx.clientAddress != address(0) &&
@@ -440,7 +440,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             }
         }
         // return empty wtx object.
-        wtx = escrowedTransactions[nextTransactionID];
+        wtx = escrowedPayments[nextTransactionID];
         return wtx;
     }
 
@@ -480,7 +480,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             // Loop through the transactions map by index.
             bool updated = false;
             for (int256 index = int256(startingPoint); index >= 0; index--) {
-                wtx = escrowedTransactions[uint256(index)];
+                wtx = escrowedPayments[uint256(index)];
 
                 if (wtx.status == _status && wtx.clientAddress != address(0)) {
                     transactions[uint256(i)] = wtx;
@@ -545,7 +545,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             // Loop through the transactions map by index.
             bool updated = false;
             for (int256 index = int256(startingPoint); index >= 0; index--) {
-                wtx = escrowedTransactions[uint256(index)];
+                wtx = escrowedPayments[uint256(index)];
                 if (
                     isTxInStatus(wtx, _status) &&
                     (wtx.clientAddress == myAddress ||
@@ -595,7 +595,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier agentOnly(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             msg.sender == wtx.agentAddress,
             "Action can only be performed by the agent"
@@ -607,7 +607,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * Run the method for deposit transactions only.
      */
     modifier depositsOnly(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             wtx.txType == TransactionType.DEPOSIT,
             "Action can only be performed for deposit transactions only!!"
@@ -620,7 +620,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier withdrawalsOnly(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             wtx.txType == TransactionType.WITHDRAWAL,
             "Action can only be performed for withdrawal transactions only!!"
@@ -633,7 +633,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier clientOnly(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             msg.sender == wtx.clientAddress,
             "Action can only be performed by the client!!"
@@ -646,7 +646,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier nonClientOnly(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             msg.sender != wtx.clientAddress,
             "Action can not be performed by the client!!"
@@ -659,7 +659,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier awaitConfirmation(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             wtx.status == Status.AWAITING_CONFIRMATIONS,
             "Transaction is not awaiting confirmation from anyone."
@@ -672,7 +672,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier awaitAgent(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             wtx.status == Status.AWAITING_AGENT,
             "Transaction already paired to an agent!!"
@@ -685,7 +685,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      * @param _transactionid the transaction being processed.
      */
     modifier balanceGreaterThanAmount(uint256 _transactionid) {
-        NashTransaction storage wtx = escrowedTransactions[_transactionid];
+        NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
             ERC20(wtx.exchangeToken).balanceOf(address(msg.sender)) >
                 wtx.grossAmount,
