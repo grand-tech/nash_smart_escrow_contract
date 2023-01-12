@@ -204,8 +204,12 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     /**
      * Client initialize deposit transaction.
      * @param _amount the amount to be deposited.
+     * @param _exchangeToken the token to be exchanged through the escrow.
      **/
-    function initializeDepositTransaction(uint256 _amount) public {
+    function initializeDepositTransaction(
+        uint256 _amount,
+        address _exchangeToken
+    ) public {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
@@ -226,6 +230,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
+        newPayment.enxchangeToken = _exchangeToken;
 
         emit TransactionInitEvent(newPayment);
     }

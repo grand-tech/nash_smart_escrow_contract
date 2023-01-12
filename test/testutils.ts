@@ -1,6 +1,6 @@
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 import { Contract } from "ethers";
-import { ethers } from "hardhat";
+import { ethers, upgrades } from "hardhat";
 
 /**
  * @typedef {Object} NashEscrowTransaction Nash escrow transaction object.
@@ -17,6 +17,7 @@ import { ethers } from "hardhat";
  * @property { boolean } clientApproval - true on clients approval.
  * @property { string } clientPaymentDetails - the client`s phone number.
  * @property { string } agentPhoneNumber - the agent`s phone number.
+ * @property { string } enxchangeToken - the address of the token being exchanged in the transaction.
  */
 export type NashEscrowTransaction = {
   id: number;
@@ -32,6 +33,7 @@ export type NashEscrowTransaction = {
   clientApproval: string;
   clientPaymentDetails: string;
   agentPaymentDetails: string;
+  enxchangeToken: string;
 };
 
 export class TestUtil {
@@ -55,11 +57,12 @@ export class TestUtil {
     this.cUSD = cUSD;
 
     const NashEscrow = await ethers.getContractFactory("NashEscrow");
-    const nashEscrow = await NashEscrow.deploy(
-      cUSD.address,
-      this.agentFees,
-      this.nashFees,
-      nashTreasury.address
+    const nashEscrow = await upgrades.deployProxy(
+      NashEscrow,
+      [nashTreasury.address, this.nashFees, this.agentFees],
+      {
+        initializer: "initialize",
+      }
     );
     await nashEscrow.deployed();
 
@@ -89,6 +92,7 @@ export class TestUtil {
       clientApproval: tx[10],
       agentPaymentDetails: Buffer.from(tx[11], "base64").toString("ascii"),
       clientPaymentDetails: Buffer.from(tx[12], "base64").toString("ascii"),
+      enxchangeToken: tx[13],
     };
 
     return nashTx;
