@@ -2,7 +2,7 @@ import { ethers, upgrades } from "hardhat";
 
 // TODO: pluck out some code from environment variables.
 
-const PROXY = "0x87BACC28aC96ee1Cbc872CaaAb0191CB4E30fF71";
+const PROXY = "0x1A25E43A909b27f635bd3dcCB5345DE2902B18ee";
 
 async function main() {
   const NashEscrow = await ethers.getContractFactory("NashEscrow");
