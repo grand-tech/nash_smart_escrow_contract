@@ -23,7 +23,7 @@
   "function getTransactionByIndex(uint256) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address))",
   "function getTransactions(uint256,uint256,uint8) view returns (tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address)[])",
   "function initialize(address,uint256,uint256)",
-  "function initializeDepositTransaction(uint256)",
+  "function initializeDepositTransaction(uint256,address)",
   "function initializeWithdrawalTransaction(uint256,address) payable",
   "function isTxInStatus(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address),uint8[]) pure returns (bool)",
   "function owner() view returns (address)",

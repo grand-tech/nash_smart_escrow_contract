@@ -96,7 +96,7 @@ export interface NashEscrowInterface extends utils.Interface {
     "getTransactionByIndex(uint256)": FunctionFragment;
     "getTransactions(uint256,uint256,uint8)": FunctionFragment;
     "initialize(address,uint256,uint256)": FunctionFragment;
-    "initializeDepositTransaction(uint256)": FunctionFragment;
+    "initializeDepositTransaction(uint256,address)": FunctionFragment;
     "initializeWithdrawalTransaction(uint256,address)": FunctionFragment;
     "isTxInStatus((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address),uint8[])": FunctionFragment;
     "owner()": FunctionFragment;
@@ -210,7 +210,7 @@ export interface NashEscrowInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initializeDepositTransaction",
-    values: [PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "initializeWithdrawalTransaction",
@@ -553,6 +553,7 @@ export interface NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
+      _exchangeToken: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -670,6 +671,7 @@ export interface NashEscrow extends BaseContract {
 
   initializeDepositTransaction(
     _amount: PromiseOrValue<BigNumberish>,
+    _exchangeToken: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -787,6 +789,7 @@ export interface NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
+      _exchangeToken: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -952,6 +955,7 @@ export interface NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
+      _exchangeToken: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1074,6 +1078,7 @@ export interface NashEscrow extends BaseContract {
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
+      _exchangeToken: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
