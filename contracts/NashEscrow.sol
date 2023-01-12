@@ -78,7 +78,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         bool clientApproval;
         string agentPaymentDetails;
         string clientPaymentDetails;
-        address enxchangeToken;
+        address exchangeToken;
     }
 
     /**
@@ -190,7 +190,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
-        newPayment.enxchangeToken = _exchangeToken;
+        newPayment.exchangeToken = _exchangeToken;
 
         ERC20(_exchangeToken).transferFrom(
             msg.sender,
@@ -230,7 +230,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
-        newPayment.enxchangeToken = _exchangeToken;
+        newPayment.exchangeToken = _exchangeToken;
 
         emit TransactionInitEvent(newPayment);
     }
@@ -295,7 +295,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         wtx.status = Status.AWAITING_CONFIRMATIONS;
 
         require(
-            ERC20(wtx.enxchangeToken).transferFrom(
+            ERC20(wtx.exchangeToken).transferFrom(
                 msg.sender,
                 address(this),
                 wtx.grossAmount
@@ -362,14 +362,14 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         );
 
         if (wtx.txType == TransactionType.DEPOSIT) {
-            ERC20(wtx.enxchangeToken).transfer(
+            ERC20(wtx.exchangeToken).transfer(
                 wtx.clientAddress,
                 wtx.netAmount
             );
         } else {
             // Transafer the amount to the agent address.
             require(
-                ERC20(wtx.enxchangeToken).transfer(
+                ERC20(wtx.exchangeToken).transfer(
                     wtx.agentAddress,
                     wtx.netAmount
                 ),
@@ -379,13 +379,13 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         // Transafer the agents fees to the agents address.
         require(
-            ERC20(wtx.enxchangeToken).transfer(wtx.agentAddress, wtx.agentFee),
+            ERC20(wtx.exchangeToken).transfer(wtx.agentAddress, wtx.agentFee),
             "Agent fee transfer failed."
         );
 
         // Transafer the agents total (amount + agent fees)
         require(
-            ERC20(wtx.enxchangeToken).transfer(
+            ERC20(wtx.exchangeToken).transfer(
                 nashTreasuryAddress,
                 wtx.nashFee
             ),
@@ -687,7 +687,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     modifier balanceGreaterThanAmount(uint256 _transactionid) {
         NashTransaction storage wtx = escrowedPayments[_transactionid];
         require(
-            ERC20(wtx.enxchangeToken).balanceOf(address(msg.sender)) >
+            ERC20(wtx.exchangeToken).balanceOf(address(msg.sender)) >
                 wtx.grossAmount,
             "Your balance must be greater than the transaction gross amount."
         );

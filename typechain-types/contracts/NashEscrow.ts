@@ -43,7 +43,7 @@ export declare namespace NashEscrow {
     clientApproval: PromiseOrValue<boolean>;
     agentPaymentDetails: PromiseOrValue<string>;
     clientPaymentDetails: PromiseOrValue<string>;
-    enxchangeToken: PromiseOrValue<string>;
+    exchangeToken: PromiseOrValue<string>;
   };
 
   export type NashTransactionStructOutput = [
@@ -75,7 +75,7 @@ export declare namespace NashEscrow {
     clientApproval: boolean;
     agentPaymentDetails: string;
     clientPaymentDetails: string;
-    enxchangeToken: string;
+    exchangeToken: string;
   };
 }
 
