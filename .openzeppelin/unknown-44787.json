@@ -6,18 +6,8 @@
   },
   "proxies": [
     {
-      "address": "0xBc0a549c417A2a4Ed66C9A7111fCd13f0f368ae2",
-      "txHash": "0x684c675f1712c64da821785406585d5ac27e2a48641ab64fa5b43a19f43d89a0",
-      "kind": "transparent"
-    },
-    {
-      "address": "0x34143ED79a9966eC38aeB6cA25099a296cF44a7a",
-      "txHash": "0xbc20839a69d1413ed492ee283b8c790e0951636fb6287492736a9f5b766e3503",
-      "kind": "transparent"
-    },
-    {
-      "address": "0xD0A96C8D738Ad3019D26499D8956F032056296ef",
-      "txHash": "0xbf6d30095e854c1a40b6d6e882e8c0841f9e0c1e40bee41d719229f7785e9570",
+      "address": "0xAaBcdFcb67a29bC5f626e88dD3C6Ee542ACF05b3",
+      "txHash": "0x67b5eb2c3446fade27f831c219c7b9f783b8112cafe3b55c4273cd1b0756ba45",
       "kind": "transparent"
     }
   ],
@@ -507,6 +497,247 @@
     "50b7f7d87117b4b49818a1586b4f9df98ccd4bebf781a64cd65aa2e89f0df7f3": {
       "address": "0xBa42d80A4D1eB3eAA6A0cd0775A557aEBaA4a1E3",
       "txHash": "0x1c338adbb89482e20bc64d0fd922f33d6cdfc0101c5ab3fe9786b772ada377ea",
+      "layout": {
+        "solcVersion": "0.8.17",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "nextTransactionID",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:10"
+          },
+          {
+            "label": "agentFee",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:12"
+          },
+          {
+            "label": "nashFee",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:14"
+          },
+          {
+            "label": "successfulTransactionsCounter",
+            "offset": 0,
+            "slot": "104",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:16"
+          },
+          {
+            "label": "nashTreasuryAddress",
+            "offset": 0,
+            "slot": "105",
+            "type": "t_address",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:35"
+          },
+          {
+            "label": "escrowedPayments",
+            "offset": 0,
+            "slot": "106",
+            "type": "t_mapping(t_uint256,t_struct(NashTransaction)1438_storage)",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:39"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_enum(Status)1407": {
+            "label": "enum NashEscrow.Status",
+            "members": [
+              "AWAITING_AGENT",
+              "AWAITING_CONFIRMATIONS",
+              "CONFIRMED",
+              "CANCELED",
+              "DONE"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(TransactionType)1401": {
+            "label": "enum NashEscrow.TransactionType",
+            "members": [
+              "DEPOSIT",
+              "WITHDRAWAL"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_uint256,t_struct(NashTransaction)1438_storage)": {
+            "label": "mapping(uint256 => struct NashEscrow.NashTransaction)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(NashTransaction)1438_storage": {
+            "label": "struct NashEscrow.NashTransaction",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "txType",
+                "type": "t_enum(TransactionType)1401",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "clientAddress",
+                "type": "t_address",
+                "offset": 1,
+                "slot": "1"
+              },
+              {
+                "label": "agentAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(Status)1407",
+                "offset": 20,
+                "slot": "2"
+              },
+              {
+                "label": "netAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "agentFee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "nashFee",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "grossAmount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "agentApproval",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "clientApproval",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "7"
+              },
+              {
+                "label": "agentPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "8"
+              },
+              {
+                "label": "clientPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "9"
+              },
+              {
+                "label": "enxchangeToken",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "10"
+              }
+            ],
+            "numberOfBytes": "352"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "66abf328896d2df46c9872c5c71a152330d2078f2d9fcf0ca9cedb1a865aa9f3": {
+      "address": "0xF84eE3a06cDB8d968786daA6B66cce3d053530C4",
+      "txHash": "0x39796df2427a562c2dd5c0dace3c29e509c286df53be147d14567c4ce4cc82ba",
       "layout": {
         "solcVersion": "0.8.17",
         "storage": [
