@@ -28,8 +28,8 @@
   "function isTxInStatus(tuple(uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address),uint8[]) pure returns (bool)",
   "function owner() view returns (address)",
   "function renounceOwnership()",
+  "function setAgentFees(uint256)",
+  "function setNashFees(uint256)",
   "function setNashTreasury(address)",
-  "function transferOwnership(address)",
-  "function updateAgentFees(uint256)",
-  "function updateNashFees(uint256)"
+  "function transferOwnership(address)"
 ]
