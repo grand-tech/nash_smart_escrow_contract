@@ -101,10 +101,10 @@ export interface NashEscrowInterface extends utils.Interface {
     "isTxInStatus((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address),uint8[])": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
+    "setAgentFees(uint256)": FunctionFragment;
+    "setNashFees(uint256)": FunctionFragment;
     "setNashTreasury(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
-    "updateAgentFees(uint256)": FunctionFragment;
-    "updateNashFees(uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -129,10 +129,10 @@ export interface NashEscrowInterface extends utils.Interface {
       | "isTxInStatus"
       | "owner"
       | "renounceOwnership"
+      | "setAgentFees"
+      | "setNashFees"
       | "setNashTreasury"
       | "transferOwnership"
-      | "updateAgentFees"
-      | "updateNashFees"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -226,20 +226,20 @@ export interface NashEscrowInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
+    functionFragment: "setAgentFees",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "setNashFees",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
     functionFragment: "setNashTreasury",
     values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateAgentFees",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "updateNashFees",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
 
   decodeFunctionResult(
@@ -314,19 +314,19 @@ export interface NashEscrowInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "setAgentFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "setNashFees",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "setNashTreasury",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateAgentFees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "updateNashFees",
     data: BytesLike
   ): Result;
 
@@ -575,6 +575,16 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    setAgentFees(
+      _agentFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
+    setNashFees(
+      _nashFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     setNashTreasury(
       _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -582,16 +592,6 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    updateNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
   };
@@ -693,6 +693,16 @@ export interface NashEscrow extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  setAgentFees(
+    _agentFees: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
+  setNashFees(
+    _nashFees: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   setNashTreasury(
     _newTreasuryAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -700,16 +710,6 @@ export interface NashEscrow extends BaseContract {
 
   transferOwnership(
     newOwner: PromiseOrValue<string>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateAgentFees(
-    _agentFees: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  updateNashFees(
-    _nashFees: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -809,6 +809,16 @@ export interface NashEscrow extends BaseContract {
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
+    setAgentFees(
+      _agentFees: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    setNashFees(
+      _nashFees: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     setNashTreasury(
       _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
@@ -816,16 +826,6 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    updateNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -977,6 +977,16 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    setAgentFees(
+      _agentFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
+    setNashFees(
+      _nashFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     setNashTreasury(
       _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -984,16 +994,6 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    updateNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
   };
@@ -1100,6 +1100,16 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    setAgentFees(
+      _agentFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    setNashFees(
+      _nashFees: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     setNashTreasury(
       _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -1107,16 +1117,6 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    updateNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
