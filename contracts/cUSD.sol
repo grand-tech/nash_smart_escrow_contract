@@ -3,7 +3,7 @@
 /**
  *Submitted for verification at Etherscan.io on 2020-01-31
  */
-pragma solidity 0.8.17;
+pragma solidity 0.8.7;
 
 import "hardhat/console.sol";
 

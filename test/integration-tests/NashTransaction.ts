@@ -1,235 +1,175 @@
 import { expect } from "chai";
 import { BigNumber } from "ethers";
-import { TestUtil, NashEscrowTransaction } from "../testutils";
+import {
+  convertToNashTransactionObj,
+  deployNashEscrowContract,
+  NashEscrowTransaction,
+} from "../testutils";
+import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Deposit E2E", function () {
-  it("Test end to end Deposit tx", async function () {
-    const testUtil = new TestUtil();
-    await testUtil.intit();
+  it("Test end to end deposit tx", async function () {
+    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+      deployNashEscrowContract
+    );
 
-    const agentSigner = testUtil.user1Address;
-    const clientSigner = testUtil.user2Address;
+    const agentSigner = owner;
+    const clientSigner = address2;
 
-    const agentAddress = await agentSigner.getAddress();
-    const clientAddress = await clientSigner.getAddress();
+    await cUSD.approve(nashEscrow.address, 10);
+    expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    await testUtil.cUSD.approve(testUtil.nashEscrow.address, 10);
-    expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
-
-    let agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    let clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    let agentBalance = await cUSD.balanceOf(agentSigner.address);
+    let clientBalance = await cUSD.balanceOf(clientSigner.address);
 
     // Initialize top up transaction.
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(
-        5,
-        testUtil.cUSD.address
-      )
+        .initializeDepositTransaction(5, cUSD.address, tokenLable)
     )
       .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, testUtil.user1Address.getAddress());
+      .withArgs(0, clientSigner.address);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("100"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
     // Agent accept transaction
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(agentSigner)
         .agentAcceptDepositTransaction(0, "test phone number")
     )
       .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Client write comment. i.e after comment encrypotion on the front end.
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(clientSigner)
         .clientWritePaymentInformation(0, "test client number")
     )
       .to.emit("NashEscrow", "SavedClientCommentEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
-    ;
+      .withArgs(0, owner, address2);
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("95"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
     // Client confirm transaction.
-    expect(
-      await testUtil.nashEscrow.connect(clientSigner).clientConfirmPayment(0)
-    )
+    expect(await nashEscrow.connect(clientSigner).clientConfirmPayment(0))
       .to.emit("NashEscrow", "ConfirmationCompletedEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("95"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
     // Agent confirm transaction.
-    expect(
-      await testUtil.nashEscrow.connect(agentSigner).agentConfirmPayment(0)
-    )
+    expect(await nashEscrow.connect(agentSigner).agentConfirmPayment(0))
       .to.emit("NashEscrow", "TransactionCompletionEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
-    const nashTreasury = await testUtil.cUSD.balanceOf(
-      testUtil.nashTreasury.address
-    );
-    expect(nashTreasury).to.equal(BigNumber.from("1"));
-    expect(agentBalance).to.equal(BigNumber.from("97"));
-    expect(clientBalance).to.equal(BigNumber.from("2"));
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
+
+    expect(agentBalance).to.equal(BigNumber.from("95"));
+    expect(clientBalance).to.equal(BigNumber.from("5"));
 
     // Value above next tx index
-    const tx2: NashEscrowTransaction = testUtil.convertToNashTransactionObj(
-      await testUtil.nashEscrow
-        .connect(testUtil.user2Address)
-        .getTransactionByIndex(0)
+    const tx2: NashEscrowTransaction = convertToNashTransactionObj(
+      await nashEscrow.connect(address2).getTransactionByIndex(0)
     );
     expect(tx2.id).equal(0);
     expect(tx2.status).equal(4);
   });
 });
 
-
-
 describe("Withdrawal E2E", function () {
   it("Test end to end Withdrawal tx", async function () {
-    const testUtil = new TestUtil();
-    await testUtil.intit();
+    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+      deployNashEscrowContract
+    );
 
-    const agentSigner = testUtil.user2Address;
-    const clientSigner = testUtil.user1Address;
+    const agentSigner = address2;
+    const clientSigner = owner;
 
-    const agentAddress = await agentSigner.getAddress();
-    const clientAddress = await clientSigner.getAddress();
+    await cUSD.approve(nashEscrow.address, 10);
+    expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    await testUtil.cUSD.approve(testUtil.nashEscrow.address, 10);
-    expect(await testUtil.nashEscrow.getNextTransactionIndex()).to.equal(0);
-
-    let agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    let clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    let agentBalance = await cUSD.balanceOf(agentSigner.address);
+    let clientBalance = await cUSD.balanceOf(clientSigner.address);
 
     // Initialize top up transaction.
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(clientSigner)
-        .initializeWithdrawalTransaction(
-        5,
-        testUtil.cUSD.address
-      )
+        .initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
     )
       .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, testUtil.user1Address.getAddress());
+      .withArgs(0, owner);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(clientBalance).to.equal(BigNumber.from("95"));
     expect(agentBalance).to.equal(BigNumber.from("0"));
 
     // Agent accept transaction
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(agentSigner)
         .agentAcceptWithdrawalTransaction(0, "test phone number")
     )
       .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Client write comment. i.e after comment encrypotion on the front end.
     expect(
-      await testUtil.nashEscrow
+      await nashEscrow
         .connect(clientSigner)
         .clientWritePaymentInformation(0, "test client number")
     )
       .to.emit("NashEscrow", "SavedClientCommentEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
-    ;
+      .withArgs(0, owner, address2);
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(clientBalance).to.equal(BigNumber.from("95"));
     expect(agentBalance).to.equal(BigNumber.from("0"));
 
     // Client confirm transaction.
-    expect(
-      await testUtil.nashEscrow.connect(clientSigner).clientConfirmPayment(0)
-    )
+    expect(await nashEscrow.connect(clientSigner).clientConfirmPayment(0))
       .to.emit("NashEscrow", "ConfirmationCompletedEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("0"));
     expect(clientBalance).to.equal(BigNumber.from("95"));
 
     // Agent confirm transaction.
-    expect(
-      await testUtil.nashEscrow.connect(agentSigner).agentConfirmPayment(0)
-    )
+    expect(await nashEscrow.connect(agentSigner).agentConfirmPayment(0))
       .to.emit("NashEscrow", "TransactionCompletionEvent")
-      .withArgs(
-        0,
-        testUtil.user1Address.getAddress(),
-        testUtil.user2Address.getAddress()
-      );
+      .withArgs(0, owner, address2);
 
     // Check balances after method call.
-    agentBalance = await testUtil.cUSD.balanceOf(agentAddress);
-    clientBalance = await testUtil.cUSD.balanceOf(clientAddress);
-    const nashTreasury = await testUtil.cUSD.balanceOf(
-      testUtil.nashTreasury.address
-    );
-    expect(nashTreasury).to.equal(BigNumber.from("1"));
-    expect(agentBalance).to.equal(BigNumber.from("4"));
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    expect(agentBalance).to.equal(BigNumber.from("5"));
     expect(clientBalance).to.equal(BigNumber.from("95"));
 
     // Value above next tx index
-    const tx2: NashEscrowTransaction = testUtil.convertToNashTransactionObj(
-      await testUtil.nashEscrow
-        .connect(testUtil.user2Address)
-        .getTransactionByIndex(0)
+    const tx2: NashEscrowTransaction = convertToNashTransactionObj(
+      await nashEscrow.connect(address2).getTransactionByIndex(0)
     );
     expect(tx2.id).equal(0);
     expect(tx2.status).equal(4);
