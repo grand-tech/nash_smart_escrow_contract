@@ -35,15 +35,13 @@ export declare namespace NashEscrow {
     clientAddress: PromiseOrValue<string>;
     agentAddress: PromiseOrValue<string>;
     status: PromiseOrValue<BigNumberish>;
-    netAmount: PromiseOrValue<BigNumberish>;
-    agentFee: PromiseOrValue<BigNumberish>;
-    nashFee: PromiseOrValue<BigNumberish>;
-    grossAmount: PromiseOrValue<BigNumberish>;
+    amount: PromiseOrValue<BigNumberish>;
     agentApproval: PromiseOrValue<boolean>;
     clientApproval: PromiseOrValue<boolean>;
     agentPaymentDetails: PromiseOrValue<string>;
     clientPaymentDetails: PromiseOrValue<string>;
     exchangeToken: PromiseOrValue<string>;
+    exchangeTokenLable: PromiseOrValue<string>;
   };
 
   export type NashTransactionStructOutput = [
@@ -53,11 +51,9 @@ export declare namespace NashEscrow {
     string,
     number,
     BigNumber,
-    BigNumber,
-    BigNumber,
-    BigNumber,
     boolean,
     boolean,
+    string,
     string,
     string,
     string
@@ -67,15 +63,13 @@ export declare namespace NashEscrow {
     clientAddress: string;
     agentAddress: string;
     status: number;
-    netAmount: BigNumber;
-    agentFee: BigNumber;
-    nashFee: BigNumber;
-    grossAmount: BigNumber;
+    amount: BigNumber;
     agentApproval: boolean;
     clientApproval: boolean;
     agentPaymentDetails: string;
     clientPaymentDetails: string;
     exchangeToken: string;
+    exchangeTokenLable: string;
   };
 }
 
@@ -88,22 +82,17 @@ export interface NashEscrowInterface extends utils.Interface {
     "clientWritePaymentInformation(uint256,string)": FunctionFragment;
     "countSuccessfulTransactions()": FunctionFragment;
     "finalizeTransaction(uint256)": FunctionFragment;
-    "getAgentFee()": FunctionFragment;
     "getMyTransactions(uint256,uint256,uint8[],address)": FunctionFragment;
-    "getNashFee()": FunctionFragment;
     "getNextTransactionIndex()": FunctionFragment;
     "getNextUnpairedTransaction(uint256)": FunctionFragment;
     "getTransactionByIndex(uint256)": FunctionFragment;
     "getTransactions(uint256,uint256,uint8)": FunctionFragment;
-    "initialize(address,uint256,uint256)": FunctionFragment;
-    "initializeDepositTransaction(uint256,address)": FunctionFragment;
-    "initializeWithdrawalTransaction(uint256,address)": FunctionFragment;
-    "isTxInStatus((uint256,uint8,address,address,uint8,uint256,uint256,uint256,uint256,bool,bool,string,string,address),uint8[])": FunctionFragment;
+    "initialize()": FunctionFragment;
+    "initializeDepositTransaction(uint256,address,string)": FunctionFragment;
+    "initializeWithdrawalTransaction(uint256,address,string)": FunctionFragment;
+    "isTxInStatus((uint256,uint8,address,address,uint8,uint256,bool,bool,string,string,address,string),uint8[])": FunctionFragment;
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
-    "setAgentFees(uint256)": FunctionFragment;
-    "setNashFees(uint256)": FunctionFragment;
-    "setNashTreasury(address)": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
   };
 
@@ -116,9 +105,7 @@ export interface NashEscrowInterface extends utils.Interface {
       | "clientWritePaymentInformation"
       | "countSuccessfulTransactions"
       | "finalizeTransaction"
-      | "getAgentFee"
       | "getMyTransactions"
-      | "getNashFee"
       | "getNextTransactionIndex"
       | "getNextUnpairedTransaction"
       | "getTransactionByIndex"
@@ -129,9 +116,6 @@ export interface NashEscrowInterface extends utils.Interface {
       | "isTxInStatus"
       | "owner"
       | "renounceOwnership"
-      | "setAgentFees"
-      | "setNashFees"
-      | "setNashTreasury"
       | "transferOwnership"
   ): FunctionFragment;
 
@@ -164,10 +148,6 @@ export interface NashEscrowInterface extends utils.Interface {
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
-    functionFragment: "getAgentFee",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
     functionFragment: "getMyTransactions",
     values: [
       PromiseOrValue<BigNumberish>,
@@ -175,10 +155,6 @@ export interface NashEscrowInterface extends utils.Interface {
       PromiseOrValue<BigNumberish>[],
       PromiseOrValue<string>
     ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "getNashFee",
-    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "getNextTransactionIndex",
@@ -202,19 +178,23 @@ export interface NashEscrowInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "initialize",
-    values: [
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<BigNumberish>
-    ]
+    values?: undefined
   ): string;
   encodeFunctionData(
     functionFragment: "initializeDepositTransaction",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "initializeWithdrawalTransaction",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
+    values: [
+      PromiseOrValue<BigNumberish>,
+      PromiseOrValue<string>,
+      PromiseOrValue<string>
+    ]
   ): string;
   encodeFunctionData(
     functionFragment: "isTxInStatus",
@@ -224,18 +204,6 @@ export interface NashEscrowInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "renounceOwnership",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setAgentFees",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setNashFees",
-    values: [PromiseOrValue<BigNumberish>]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "setNashTreasury",
-    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "transferOwnership",
@@ -271,14 +239,9 @@ export interface NashEscrowInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "getAgentFee",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
     functionFragment: "getMyTransactions",
     data: BytesLike
   ): Result;
-  decodeFunctionResult(functionFragment: "getNashFee", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "getNextTransactionIndex",
     data: BytesLike
@@ -311,18 +274,6 @@ export interface NashEscrowInterface extends utils.Interface {
   decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "renounceOwnership",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setAgentFees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setNashFees",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "setNashTreasury",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -513,8 +464,6 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    getAgentFee(overrides?: CallOverrides): Promise<[BigNumber]>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -522,8 +471,6 @@ export interface NashEscrow extends BaseContract {
       myAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[NashEscrow.NashTransactionStructOutput[]]>;
-
-    getNashFee(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getNextTransactionIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
 
@@ -545,21 +492,20 @@ export interface NashEscrow extends BaseContract {
     ): Promise<[NashEscrow.NashTransactionStructOutput[]]>;
 
     initialize(
-      _nashTreasuryAddress: PromiseOrValue<string>,
-      _nashFees: PromiseOrValue<BigNumberish>,
-      _agentFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -572,21 +518,6 @@ export interface NashEscrow extends BaseContract {
     owner(overrides?: CallOverrides): Promise<[string]>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    setNashTreasury(
-      _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -631,8 +562,6 @@ export interface NashEscrow extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  getAgentFee(overrides?: CallOverrides): Promise<BigNumber>;
-
   getMyTransactions(
     _paginationCount: PromiseOrValue<BigNumberish>,
     _startingPoint: PromiseOrValue<BigNumberish>,
@@ -640,8 +569,6 @@ export interface NashEscrow extends BaseContract {
     myAddress: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<NashEscrow.NashTransactionStructOutput[]>;
-
-  getNashFee(overrides?: CallOverrides): Promise<BigNumber>;
 
   getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -663,21 +590,20 @@ export interface NashEscrow extends BaseContract {
   ): Promise<NashEscrow.NashTransactionStructOutput[]>;
 
   initialize(
-    _nashTreasuryAddress: PromiseOrValue<string>,
-    _nashFees: PromiseOrValue<BigNumberish>,
-    _agentFees: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   initializeDepositTransaction(
     _amount: PromiseOrValue<BigNumberish>,
     _exchangeToken: PromiseOrValue<string>,
+    _exchangeTokenLable: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   initializeWithdrawalTransaction(
     _amount: PromiseOrValue<BigNumberish>,
     _exchangeToken: PromiseOrValue<string>,
+    _exchangeTokenLable: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -690,21 +616,6 @@ export interface NashEscrow extends BaseContract {
   owner(overrides?: CallOverrides): Promise<string>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setAgentFees(
-    _agentFees: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setNashFees(
-    _nashFees: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  setNashTreasury(
-    _newTreasuryAddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -749,8 +660,6 @@ export interface NashEscrow extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    getAgentFee(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -758,8 +667,6 @@ export interface NashEscrow extends BaseContract {
       myAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<NashEscrow.NashTransactionStructOutput[]>;
-
-    getNashFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -780,22 +687,19 @@ export interface NashEscrow extends BaseContract {
       overrides?: CallOverrides
     ): Promise<NashEscrow.NashTransactionStructOutput[]>;
 
-    initialize(
-      _nashTreasuryAddress: PromiseOrValue<string>,
-      _nashFees: PromiseOrValue<BigNumberish>,
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
+    initialize(overrides?: CallOverrides): Promise<void>;
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -808,21 +712,6 @@ export interface NashEscrow extends BaseContract {
     owner(overrides?: CallOverrides): Promise<string>;
 
     renounceOwnership(overrides?: CallOverrides): Promise<void>;
-
-    setAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    setNashTreasury(
-      _newTreasuryAddress: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
@@ -915,8 +804,6 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    getAgentFee(overrides?: CallOverrides): Promise<BigNumber>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -924,8 +811,6 @@ export interface NashEscrow extends BaseContract {
       myAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
-
-    getNashFee(overrides?: CallOverrides): Promise<BigNumber>;
 
     getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
@@ -947,21 +832,20 @@ export interface NashEscrow extends BaseContract {
     ): Promise<BigNumber>;
 
     initialize(
-      _nashTreasuryAddress: PromiseOrValue<string>,
-      _nashFees: PromiseOrValue<BigNumberish>,
-      _agentFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -974,21 +858,6 @@ export interface NashEscrow extends BaseContract {
     owner(overrides?: CallOverrides): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    setNashTreasury(
-      _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -1036,8 +905,6 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    getAgentFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -1045,8 +912,6 @@ export interface NashEscrow extends BaseContract {
       myAddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
-
-    getNashFee(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getNextTransactionIndex(
       overrides?: CallOverrides
@@ -1070,21 +935,20 @@ export interface NashEscrow extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     initialize(
-      _nashTreasuryAddress: PromiseOrValue<string>,
-      _nashFees: PromiseOrValue<BigNumberish>,
-      _agentFees: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
+      _exchangeTokenLable: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
@@ -1097,21 +961,6 @@ export interface NashEscrow extends BaseContract {
     owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setAgentFees(
-      _agentFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setNashFees(
-      _nashFees: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    setNashTreasury(
-      _newTreasuryAddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 

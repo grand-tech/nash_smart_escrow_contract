@@ -27,7 +27,7 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 // Go to https://hardhat.org/config/ to learn more
 
 const config: HardhatUserConfig = {
-  solidity: "0.8.17",
+  solidity: "0.8.7",
   networks: {
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
@@ -56,9 +56,9 @@ const config: HardhatUserConfig = {
     runOnCompile: true,
     clear: true,
     flat: true,
+    format: "json",
     only: [":ERC20$", "NashEscrow"],
     spacing: 2,
-    pretty: true,
   },
 };
 

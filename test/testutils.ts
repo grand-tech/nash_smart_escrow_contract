@@ -1,5 +1,3 @@
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
-import { Contract } from "ethers";
 import { ethers, upgrades } from "hardhat";
 
 /**
@@ -23,78 +21,56 @@ export type NashEscrowTransaction = {
   id: number;
   txType: number;
   clientAddress: string;
-  status: number;
-  netAmount: number;
   agentAddress?: string;
-  nashFee: number;
-  grossAmount: number;
-  agentFee: number;
+  status: number;
+  amount: number;
   agentApproval: string;
   clientApproval: string;
   clientPaymentDetails: string;
   agentPaymentDetails: string;
   enxchangeToken: string;
+  exchangeTokenLable: string;
 };
 
-export class TestUtil {
-  public cUSD!: Contract;
-  public nashEscrow!: Contract;
-  public user1Address!: SignerWithAddress;
-  public user2Address!: SignerWithAddress;
+export async function deployNashEscrowContract() {
+  const [owner, address2] = await ethers.getSigners();
 
-  public nashTreasury!: SignerWithAddress;
-  public nashFees = 1;
-  public agentFees = 2;
+  const tokenLable = "cUSD";
+  const CUSD = await ethers.getContractFactory(tokenLable);
+  const cUSD = await CUSD.deploy(100, tokenLable, 0, tokenLable);
+  await cUSD.deployed();
 
-  //   constructor() {}
+  const NashEscrow = await ethers.getContractFactory("NashEscrow");
+  const nashEscrow = await upgrades.deployProxy(NashEscrow, [], {
+    initializer: "initialize",
+  });
+  await nashEscrow.deployed();
 
-  async intit() {
-    const [owner, address2, nashTreasury] = await ethers.getSigners();
-    const CUSD = await ethers.getContractFactory("cUSD");
-    const cUSD = await CUSD.deploy(100, "cUSD", 0, "cUSD");
-    await cUSD.deployed();
+  return { owner, address2, tokenLable, nashEscrow, cUSD };
+}
 
-    this.cUSD = cUSD;
+/**
+ * Convert response to nash transaction object.
+ * @param tx the response object.
+ * @returns the nash transaction object.
+ */
+export function convertToNashTransactionObj(
+  tx: string[]
+): NashEscrowTransaction {
+  const nashTx: NashEscrowTransaction = {
+    id: parseInt(tx[0]),
+    txType: parseInt(tx[1]),
+    clientAddress: tx[2],
+    agentAddress: tx[3],
+    status: parseInt(tx[4]),
+    amount: parseInt(tx[5]),
+    agentApproval: tx[6],
+    clientApproval: tx[7],
+    agentPaymentDetails: Buffer.from(tx[8], "base64").toString("ascii"),
+    clientPaymentDetails: Buffer.from(tx[9], "base64").toString("ascii"),
+    enxchangeToken: tx[10],
+    exchangeTokenLable: tx[11],
+  };
 
-    const NashEscrow = await ethers.getContractFactory("NashEscrow");
-    const nashEscrow = await upgrades.deployProxy(
-      NashEscrow,
-      [nashTreasury.address, this.nashFees, this.agentFees],
-      {
-        initializer: "initialize",
-      }
-    );
-    await nashEscrow.deployed();
-
-    this.nashEscrow = nashEscrow;
-    this.user1Address = owner;
-    this.user2Address = address2;
-    this.nashTreasury = nashTreasury;
-  }
-
-  /**
-   * Convert response to nash transaction object.
-   * @param tx the response object.
-   * @returns the nash transaction object.
-   */
-  convertToNashTransactionObj(tx: string[]): NashEscrowTransaction {
-    const nashTx: NashEscrowTransaction = {
-      id: parseInt(tx[0]),
-      txType: parseInt(tx[1]),
-      clientAddress: tx[2],
-      agentAddress: tx[3],
-      status: parseInt(tx[4]),
-      netAmount: parseInt(tx[5]),
-      agentFee: parseInt(tx[6]),
-      nashFee: parseInt(tx[7]),
-      grossAmount: parseInt(tx[8]),
-      agentApproval: tx[9],
-      clientApproval: tx[10],
-      agentPaymentDetails: Buffer.from(tx[11], "base64").toString("ascii"),
-      clientPaymentDetails: Buffer.from(tx[12], "base64").toString("ascii"),
-      enxchangeToken: tx[13],
-    };
-
-    return nashTx;
-  }
+  return nashTx;
 }

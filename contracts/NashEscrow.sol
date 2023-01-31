@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: Apache-2.0
 
-pragma solidity 0.8.17;
+pragma solidity 0.8.7;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
@@ -8,10 +8,6 @@ import "hardhat/console.sol";
 
 contract NashEscrow is Initializable, OwnableUpgradeable {
     uint256 private nextTransactionID;
-
-    uint256 private agentFee;
-
-    uint256 private nashFee;
 
     uint256 private successfulTransactionsCounter;
 
@@ -28,11 +24,6 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     event TransactionCompletionEvent(NashTransaction wtx);
 
     event SavedClientCommentEvent(NashTransaction wtx);
-
-    /**
-     * Holds the nash treasury address funds. Default account for alfajores test net.
-     */
-    address internal nashTreasuryAddress;
 
     // Maps unique payment IDs to escrowed payments.
     // These payment IDs are the temporary wallet addresses created with the escrowed payments.
@@ -70,83 +61,21 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         address clientAddress;
         address agentAddress;
         Status status;
-        uint256 netAmount;
-        uint256 agentFee;
-        uint256 nashFee;
-        uint256 grossAmount;
+        uint256 amount;
         bool agentApproval;
         bool clientApproval;
         string agentPaymentDetails;
         string clientPaymentDetails;
         address exchangeToken;
-    }
-
-    /**
-     * Updates the nash treasury address.
-     */
-    function setNashTreasury(address _newTreasuryAddress) public onlyOwner {
-        nashTreasuryAddress = _newTreasuryAddress;
+        string exchangeTokenLable;
     }
 
     /**
      * Constructor.
      */
-    function initialize(
-        address _nashTreasuryAddress,
-        uint256 _nashFees,
-        uint256 _agentFees
-    ) external initializer {
+    function initialize() external initializer {
         __Context_init_unchained();
         __Ownable_init_unchained();
-
-        // Allow for default value.
-        if (_nashTreasuryAddress != address(0)) {
-            nashTreasuryAddress = _nashTreasuryAddress;
-        }
-
-        // Allow for default value.
-        if (_agentFees > 0) {
-            agentFee = _agentFees;
-        }
-
-        // Allow for default value.
-        if (_nashFees > 0) {
-            nashFee = _nashFees;
-        }
-
-        if (nextTransactionID < 1) {
-            nextTransactionID = 0;
-        }
-    }
-
-    /**
-     * Get the nash fees from the smart contract.
-     */
-    function getNashFee() public view returns (uint256) {
-        return nashFee;
-    }
-
-    /**
-     * Sets the Nash fees on the smart contract.
-     * @param _nashFees .
-     */
-    function updateNashFees(uint256 _nashFees) public onlyOwner {
-        nashFee = _nashFees;
-    }
-
-    /**
-     * Get the agent fees from the smart contract.
-     */
-    function getAgentFee() public view returns (uint256) {
-        return agentFee;
-    }
-
-    /**
-     * Sets the agents fees on the smart contract.
-     * @param _agentFees .
-     */
-    function updateAgentFees(uint256 _agentFees) public onlyOwner {
-        nashFee = _agentFees;
     }
 
     /**
@@ -169,33 +98,31 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      **/
     function initializeWithdrawalTransaction(
         uint256 _amount,
-        address _exchangeToken
+        address _exchangeToken,
+        string calldata _exchangeTokenLable
     ) public payable {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
         nextTransactionID++;
 
-        uint256 grossAmount = _amount;
         NashTransaction storage newPayment = escrowTransactions[wtxID];
 
         newPayment.clientAddress = msg.sender;
         newPayment.id = wtxID;
         newPayment.txType = TransactionType.WITHDRAWAL;
-        newPayment.netAmount = grossAmount - (nashFee + agentFee);
-        newPayment.agentFee = agentFee;
-        newPayment.nashFee = nashFee;
-        newPayment.grossAmount = grossAmount;
+        newPayment.amount = _amount;
         newPayment.status = Status.AWAITING_AGENT;
 
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
         newPayment.exchangeToken = _exchangeToken;
+        newPayment.exchangeTokenLable = _exchangeTokenLable;
 
         ERC20(_exchangeToken).transferFrom(
             msg.sender,
             address(this),
-            grossAmount
+            newPayment.amount
         );
 
         emit TransactionInitEvent(newPayment);
@@ -208,7 +135,8 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      **/
     function initializeDepositTransaction(
         uint256 _amount,
-        address _exchangeToken
+        address _exchangeToken,
+        string calldata _exchangeTokenLable
     ) public {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
@@ -217,20 +145,16 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
 
         NashTransaction storage newPayment = escrowTransactions[wtxID];
 
-        uint256 grossAmount = _amount;
-
         newPayment.clientAddress = msg.sender;
         newPayment.id = wtxID;
         newPayment.txType = TransactionType.DEPOSIT;
-        newPayment.netAmount = grossAmount - (nashFee + agentFee);
-        newPayment.agentFee = agentFee;
-        newPayment.nashFee = nashFee;
-        newPayment.grossAmount = grossAmount;
+        newPayment.amount = _amount;
         newPayment.status = Status.AWAITING_AGENT;
 
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
         newPayment.exchangeToken = _exchangeToken;
+        newPayment.exchangeTokenLable = _exchangeTokenLable;
 
         emit TransactionInitEvent(newPayment);
     }
@@ -298,7 +222,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             ERC20(wtx.exchangeToken).transferFrom(
                 msg.sender,
                 address(this),
-                wtx.grossAmount
+                wtx.amount
             ),
             "You don't have enough cUSD to accept this request."
         );
@@ -362,35 +286,20 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         );
 
         if (wtx.txType == TransactionType.DEPOSIT) {
-            ERC20(wtx.exchangeToken).transfer(
-                wtx.clientAddress,
-                wtx.netAmount
+            require(
+                ERC20(wtx.exchangeToken).transfer(
+                    wtx.clientAddress,
+                    wtx.amount
+                ),
+                "Transaction failed"
             );
         } else {
             // Transafer the amount to the agent address.
             require(
-                ERC20(wtx.exchangeToken).transfer(
-                    wtx.agentAddress,
-                    wtx.netAmount
-                ),
+                ERC20(wtx.exchangeToken).transfer(wtx.agentAddress, wtx.amount),
                 "Transaction failed."
             );
         }
-
-        // Transafer the agents fees to the agents address.
-        require(
-            ERC20(wtx.exchangeToken).transfer(wtx.agentAddress, wtx.agentFee),
-            "Agent fee transfer failed."
-        );
-
-        // Transafer the agents total (amount + agent fees)
-        require(
-            ERC20(wtx.exchangeToken).transfer(
-                nashTreasuryAddress,
-                wtx.nashFee
-            ),
-            "Transaction fee transfer failed."
-        );
 
         successfulTransactionsCounter++;
 
@@ -688,7 +597,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
         require(
             ERC20(wtx.exchangeToken).balanceOf(address(msg.sender)) >
-                wtx.grossAmount,
+                wtx.amount,
             "Your balance must be greater than the transaction gross amount."
         );
         _;
