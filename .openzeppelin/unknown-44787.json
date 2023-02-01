@@ -19,6 +19,11 @@
       "address": "0xC455151f706965AffA9D48F42b04Aa2e59d67CB5",
       "txHash": "0x45e9af2d9b8057c8dac247bd08285d1f3ef37acdf581355242f0494c4f679857",
       "kind": "transparent"
+    },
+    {
+      "address": "0x7FD6216766967F0b1Ba4C44Ca1cBc3bee517B9F1",
+      "txHash": "0x4593327a1f43e5b7bc04d6a962ad10ad0610d77dcc24739a3d5a04d61b85b950",
+      "kind": "transparent"
     }
   ],
   "impls": {
@@ -498,6 +503,211 @@
               }
             ],
             "numberOfBytes": "384"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
+    },
+    "fd7fdc53e48d8bff504cf4b79ff8b02ff2da669ce1f8c693470cec71b81eb482": {
+      "address": "0x86d54010073D83fc8c82B88E382F0a4Db30a847a",
+      "txHash": "0x7fb461adde24bb8806f6a1c25712f1c7991e0bb151f185211b7cdc5e0b78eb4f",
+      "layout": {
+        "solcVersion": "0.8.7",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "nextTransactionID",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:10"
+          },
+          {
+            "label": "successfulTransactionsCounter",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:12"
+          },
+          {
+            "label": "escrowTransactions",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_uint256,t_struct(NashTransaction)1427_storage)",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:30"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_enum(Status)1400": {
+            "label": "enum NashEscrow.Status",
+            "members": [
+              "AWAITING_AGENT",
+              "AWAITING_CONFIRMATIONS",
+              "CONFIRMED",
+              "CANCELED",
+              "DONE"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(TransactionType)1394": {
+            "label": "enum NashEscrow.TransactionType",
+            "members": [
+              "DEPOSIT",
+              "WITHDRAWAL"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_uint256,t_struct(NashTransaction)1427_storage)": {
+            "label": "mapping(uint256 => struct NashEscrow.NashTransaction)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(NashTransaction)1427_storage": {
+            "label": "struct NashEscrow.NashTransaction",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "txType",
+                "type": "t_enum(TransactionType)1394",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "clientAddress",
+                "type": "t_address",
+                "offset": 1,
+                "slot": "1"
+              },
+              {
+                "label": "agentAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(Status)1400",
+                "offset": 20,
+                "slot": "2"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "agentApproval",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "clientApproval",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "4"
+              },
+              {
+                "label": "agentPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "clientPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "exchangeToken",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "exchangeTokenLable",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
           },
           "t_uint256": {
             "label": "uint256",
