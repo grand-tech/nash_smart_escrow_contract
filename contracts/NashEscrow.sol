@@ -101,7 +101,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         address _exchangeToken,
         string calldata _exchangeTokenLable
     ) public payable {
-        require(_amount > 0, "Amount to deposit must be greater than 0.");
+        require(_amount > 0, "Amount to withdraw must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
         nextTransactionID++;
@@ -119,10 +119,18 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         newPayment.exchangeToken = _exchangeToken;
         newPayment.exchangeTokenLable = _exchangeTokenLable;
 
-        ERC20(_exchangeToken).transferFrom(
-            msg.sender,
-            address(this),
-            newPayment.amount
+        bytes memory message = string.concat(
+            "You don't have enough ",
+            bytes(_exchangeTokenLable),
+            " to initialize this withdrawl request."
+        );
+        require(
+            ERC20(_exchangeToken).transferFrom(
+                msg.sender,
+                address(this),
+                newPayment.amount
+            ),
+            string(message)
         );
 
         emit TransactionInitEvent(newPayment);
@@ -150,7 +158,6 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         newPayment.txType = TransactionType.DEPOSIT;
         newPayment.amount = _amount;
         newPayment.status = Status.AWAITING_AGENT;
-
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
         newPayment.exchangeToken = _exchangeToken;
@@ -170,7 +177,6 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     ) public clientOnly(_transactionid) awaitConfirmation(_transactionid) {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
         wtx.clientPaymentDetails = _comment;
-
         emit SavedClientCommentEvent(wtx);
     }
 
@@ -189,11 +195,9 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         nonClientOnly(_transactionid)
     {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
-
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
         wtx.agentPaymentDetails = _paymentDetails;
-
         emit AgentPairingEvent(wtx);
     }
 
@@ -218,13 +222,20 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
 
+        // construct error message incase of an error.
+        bytes memory message = string.concat(
+            "You don't have enough ",
+            bytes(wtx.exchangeTokenLable),
+            " to accept this request."
+        );
+
         require(
             ERC20(wtx.exchangeToken).transferFrom(
                 msg.sender,
                 address(this),
                 wtx.amount
             ),
-            "You don't have enough cUSD to accept this request."
+            string(message)
         );
         wtx.agentPaymentDetails = _paymentDetails;
         emit AgentPairingEvent(wtx);
@@ -273,38 +284,27 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     /**
      * Can be automated in the frontend by use of event listeners. eg on confirmation event.
      **/
-    function finalizeTransaction(uint256 _transactionid) public {
+    function finalizeTransaction(
+        uint256 _transactionid
+    )
+        private
+        confirmationComplete(_transactionid)
+        agentOrClientOnly(_transactionid)
+    {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
-        require(
-            wtx.clientAddress == msg.sender || wtx.agentAddress == msg.sender,
-            "Only the involved parties can finalize the transaction.!!"
-        );
-
-        require(
-            wtx.status == Status.CONFIRMED,
-            "Transaction not yet confirmed by both parties!!"
-        );
-
+        address targetAddress;
         if (wtx.txType == TransactionType.DEPOSIT) {
-            require(
-                ERC20(wtx.exchangeToken).transfer(
-                    wtx.clientAddress,
-                    wtx.amount
-                ),
-                "Transaction failed"
-            );
+            targetAddress = wtx.clientAddress;
         } else {
             // Transafer the amount to the agent address.
-            require(
-                ERC20(wtx.exchangeToken).transfer(wtx.agentAddress, wtx.amount),
-                "Transaction failed."
-            );
+            targetAddress = wtx.agentAddress;
         }
-
+        require(
+            ERC20(wtx.exchangeToken).transfer(targetAddress, wtx.amount),
+            "Transaction failed."
+        );
         successfulTransactionsCounter++;
-
         wtx.status = Status.DONE;
-
         emit TransactionCompletionEvent(wtx);
     }
 
@@ -590,6 +590,22 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     }
 
     /**
+     * Prevents methods to be excecuted if both parties of the
+     *  transactions have not confirmed payment.
+     * @param _transactionid the transaction being processed.
+     */
+    modifier confirmationComplete(uint256 _transactionid) {
+        NashTransaction storage wtx = escrowTransactions[_transactionid];
+        require(wtx.agentApproval, "Awaiting agent approval!!");
+        require(wtx.clientApproval, "Awaiting client approval!!");
+        require(
+            wtx.status == Status.CONFIRMED,
+            "Transaction not yet confirmed by both parties!!"
+        );
+        _;
+    }
+
+    /**
      * Prevents users othe than the client from running the logic
      * @param _transactionid the transaction being processed.
      */
@@ -599,6 +615,19 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             ERC20(wtx.exchangeToken).balanceOf(address(msg.sender)) >
                 wtx.amount,
             "Your balance must be greater than the transaction gross amount."
+        );
+        _;
+    }
+
+    /**
+     * Prevents users othe than the client from running the logic
+     * @param _transactionid the transaction being processed.
+     */
+    modifier agentOrClientOnly(uint256 _transactionid) {
+        NashTransaction storage wtx = escrowTransactions[_transactionid];
+        require(
+            wtx.clientAddress == msg.sender || wtx.agentAddress == msg.sender,
+            "Only the involved parties can finalize the transaction.!!"
         );
         _;
     }

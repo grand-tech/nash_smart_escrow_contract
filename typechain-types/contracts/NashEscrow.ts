@@ -81,7 +81,6 @@ export interface NashEscrowInterface extends utils.Interface {
     "clientConfirmPayment(uint256)": FunctionFragment;
     "clientWritePaymentInformation(uint256,string)": FunctionFragment;
     "countSuccessfulTransactions()": FunctionFragment;
-    "finalizeTransaction(uint256)": FunctionFragment;
     "getMyTransactions(uint256,uint256,uint8[],address)": FunctionFragment;
     "getNextTransactionIndex()": FunctionFragment;
     "getNextUnpairedTransaction(uint256)": FunctionFragment;
@@ -104,7 +103,6 @@ export interface NashEscrowInterface extends utils.Interface {
       | "clientConfirmPayment"
       | "clientWritePaymentInformation"
       | "countSuccessfulTransactions"
-      | "finalizeTransaction"
       | "getMyTransactions"
       | "getNextTransactionIndex"
       | "getNextUnpairedTransaction"
@@ -142,10 +140,6 @@ export interface NashEscrowInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "countSuccessfulTransactions",
     values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "finalizeTransaction",
-    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "getMyTransactions",
@@ -232,10 +226,6 @@ export interface NashEscrowInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "countSuccessfulTransactions",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "finalizeTransaction",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -459,11 +449,6 @@ export interface NashEscrow extends BaseContract {
       overrides?: CallOverrides
     ): Promise<[BigNumber]>;
 
-    finalizeTransaction(
-      _transactionid: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -557,11 +542,6 @@ export interface NashEscrow extends BaseContract {
 
   countSuccessfulTransactions(overrides?: CallOverrides): Promise<BigNumber>;
 
-  finalizeTransaction(
-    _transactionid: PromiseOrValue<BigNumberish>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
   getMyTransactions(
     _paginationCount: PromiseOrValue<BigNumberish>,
     _startingPoint: PromiseOrValue<BigNumberish>,
@@ -654,11 +634,6 @@ export interface NashEscrow extends BaseContract {
     ): Promise<void>;
 
     countSuccessfulTransactions(overrides?: CallOverrides): Promise<BigNumber>;
-
-    finalizeTransaction(
-      _transactionid: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<void>;
 
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
@@ -799,11 +774,6 @@ export interface NashEscrow extends BaseContract {
 
     countSuccessfulTransactions(overrides?: CallOverrides): Promise<BigNumber>;
 
-    finalizeTransaction(
-      _transactionid: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
     getMyTransactions(
       _paginationCount: PromiseOrValue<BigNumberish>,
       _startingPoint: PromiseOrValue<BigNumberish>,
@@ -898,11 +868,6 @@ export interface NashEscrow extends BaseContract {
 
     countSuccessfulTransactions(
       overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    finalizeTransaction(
-      _transactionid: PromiseOrValue<BigNumberish>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     getMyTransactions(
