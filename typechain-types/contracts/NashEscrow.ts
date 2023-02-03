@@ -78,6 +78,7 @@ export interface NashEscrowInterface extends utils.Interface {
     "agentAcceptDepositTransaction(uint256,string)": FunctionFragment;
     "agentAcceptWithdrawalTransaction(uint256,string)": FunctionFragment;
     "agentConfirmPayment(uint256)": FunctionFragment;
+    "cancelTransaction(uint256)": FunctionFragment;
     "clientConfirmPayment(uint256)": FunctionFragment;
     "clientWritePaymentInformation(uint256,string)": FunctionFragment;
     "countSuccessfulTransactions()": FunctionFragment;
@@ -100,6 +101,7 @@ export interface NashEscrowInterface extends utils.Interface {
       | "agentAcceptDepositTransaction"
       | "agentAcceptWithdrawalTransaction"
       | "agentConfirmPayment"
+      | "cancelTransaction"
       | "clientConfirmPayment"
       | "clientWritePaymentInformation"
       | "countSuccessfulTransactions"
@@ -127,6 +129,10 @@ export interface NashEscrowInterface extends utils.Interface {
   ): string;
   encodeFunctionData(
     functionFragment: "agentConfirmPayment",
+    values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "cancelTransaction",
     values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
@@ -217,6 +223,10 @@ export interface NashEscrowInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
+    functionFragment: "cancelTransaction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
     functionFragment: "clientConfirmPayment",
     data: BytesLike
   ): Result;
@@ -279,6 +289,7 @@ export interface NashEscrowInterface extends utils.Interface {
     "Initialized(uint8)": EventFragment;
     "OwnershipTransferred(address,address)": EventFragment;
     "SavedClientCommentEvent(tuple)": EventFragment;
+    "TransactionCanceledEvent(tuple)": EventFragment;
     "TransactionCompletionEvent(tuple)": EventFragment;
     "TransactionInitEvent(tuple)": EventFragment;
   };
@@ -290,6 +301,7 @@ export interface NashEscrowInterface extends utils.Interface {
   getEvent(nameOrSignatureOrTopic: "Initialized"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "SavedClientCommentEvent"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransactionCanceledEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransactionCompletionEvent"): EventFragment;
   getEvent(nameOrSignatureOrTopic: "TransactionInitEvent"): EventFragment;
 }
@@ -368,6 +380,17 @@ export type SavedClientCommentEventEvent = TypedEvent<
 export type SavedClientCommentEventEventFilter =
   TypedEventFilter<SavedClientCommentEventEvent>;
 
+export interface TransactionCanceledEventEventObject {
+  wtx: NashEscrow.NashTransactionStructOutput;
+}
+export type TransactionCanceledEventEvent = TypedEvent<
+  [NashEscrow.NashTransactionStructOutput],
+  TransactionCanceledEventEventObject
+>;
+
+export type TransactionCanceledEventEventFilter =
+  TypedEventFilter<TransactionCanceledEventEvent>;
+
 export interface TransactionCompletionEventEventObject {
   wtx: NashEscrow.NashTransactionStructOutput;
 }
@@ -434,6 +457,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    cancelTransaction(
+      _transactionid: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -460,12 +488,12 @@ export interface NashEscrow extends BaseContract {
     getNextTransactionIndex(overrides?: CallOverrides): Promise<[BigNumber]>;
 
     getNextUnpairedTransaction(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[NashEscrow.NashTransactionStructOutput]>;
 
     getTransactionByIndex(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[NashEscrow.NashTransactionStructOutput]>;
 
@@ -529,6 +557,11 @@ export interface NashEscrow extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  cancelTransaction(
+    _transactionid: PromiseOrValue<BigNumberish>,
+    overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   clientConfirmPayment(
     _transactionid: PromiseOrValue<BigNumberish>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -553,12 +586,12 @@ export interface NashEscrow extends BaseContract {
   getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
   getNextUnpairedTransaction(
-    _transactionID: PromiseOrValue<BigNumberish>,
+    _transactionid: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<NashEscrow.NashTransactionStructOutput>;
 
   getTransactionByIndex(
-    _transactionID: PromiseOrValue<BigNumberish>,
+    _transactionid: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<NashEscrow.NashTransactionStructOutput>;
 
@@ -622,6 +655,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
+    cancelTransaction(
+      _transactionid: PromiseOrValue<BigNumberish>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
@@ -646,12 +684,12 @@ export interface NashEscrow extends BaseContract {
     getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     getNextUnpairedTransaction(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<NashEscrow.NashTransactionStructOutput>;
 
     getTransactionByIndex(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<NashEscrow.NashTransactionStructOutput>;
 
@@ -732,6 +770,11 @@ export interface NashEscrow extends BaseContract {
     ): SavedClientCommentEventEventFilter;
     SavedClientCommentEvent(wtx?: null): SavedClientCommentEventEventFilter;
 
+    "TransactionCanceledEvent(tuple)"(
+      wtx?: null
+    ): TransactionCanceledEventEventFilter;
+    TransactionCanceledEvent(wtx?: null): TransactionCanceledEventEventFilter;
+
     "TransactionCompletionEvent(tuple)"(
       wtx?: null
     ): TransactionCompletionEventEventFilter;
@@ -761,6 +804,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    cancelTransaction(
+      _transactionid: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -785,12 +833,12 @@ export interface NashEscrow extends BaseContract {
     getNextTransactionIndex(overrides?: CallOverrides): Promise<BigNumber>;
 
     getNextUnpairedTransaction(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
     getTransactionByIndex(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -855,6 +903,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
+    cancelTransaction(
+      _transactionid: PromiseOrValue<BigNumberish>,
+      overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -883,12 +936,12 @@ export interface NashEscrow extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     getNextUnpairedTransaction(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     getTransactionByIndex(
-      _transactionID: PromiseOrValue<BigNumberish>,
+      _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

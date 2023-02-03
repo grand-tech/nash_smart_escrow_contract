@@ -2,7 +2,7 @@ import { ethers, upgrades } from "hardhat";
 
 // TODO: pluck out some code from environment variables.
 async function main() {
-  const NashEscrow = await ethers.getContractFactory("NashEscrow");
+  const NashEscrow = await ethers.getContractFactory(nashEscrow,);
   const nashEscrow = await upgrades.deployProxy(NashEscrow, [], {
     initializer: "initialize",
   });
