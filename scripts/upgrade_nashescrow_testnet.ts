@@ -5,7 +5,7 @@ import { ethers, upgrades } from "hardhat";
 const PROXY = "0xC455151f706965AffA9D48F42b04Aa2e59d67CB5";
 
 async function main() {
-  const NashEscrow = await ethers.getContractFactory("NashEscrow");
+  const NashEscrow = await ethers.getContractFactory(nashEscrow,);
   const nashEscrow = await upgrades.upgradeProxy(PROXY, NashEscrow);
 
   await nashEscrow.deployed();

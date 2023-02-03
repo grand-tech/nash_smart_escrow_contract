@@ -15,41 +15,27 @@ describe("Test Get Next un-paired transaction.", function () {
 
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, address2);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeWithdrawalTransaction(
-        5,
-        cUSD.address,
-        tokenLable
-      )
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow
+    await expect(
+      nashEscrow
         .connect(address2)
         .agentAcceptWithdrawalTransaction(3, "test phone number")
-    )
-      .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(4, address2.getAddress());
+    ).to.emit(nashEscrow, "AgentPairingEvent");
 
     // Exact value.
     const tx = await nashEscrow.connect(address2).getNextUnpairedTransaction(2);
@@ -75,41 +61,27 @@ describe("Test Get transactions.", function () {
 
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeWithdrawalTransaction(
-        5,
-        cUSD.address,
-        tokenLable
-      )
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow
+    await expect(
+      nashEscrow
         .connect(address2)
         .agentAcceptWithdrawalTransaction(3, "test phone number")
-    )
-      .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(4, address2.getAddress());
+    ).to.emit(nashEscrow, "AgentPairingEvent");
 
     // Exact value.
     const tx = await nashEscrow.connect(address2).getTransactions(5, 5, 0);
@@ -133,68 +105,48 @@ describe("Test Get My transactions.", function () {
 
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow.initializeWithdrawalTransaction(
-        5,
-        cUSD.address,
-        tokenLable
-      )
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow
+    await expect(
+      nashEscrow
         .connect(address2)
         .agentAcceptWithdrawalTransaction(3, "test phone number")
-    )
-      .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(4, address2.getAddress());
+    ).to.emit(nashEscrow, "AgentPairingEvent");
 
     // Test get my transactions
-    expect(
-      await nashEscrow.initializeWithdrawalTransaction(
-        5,
-        cUSD.address,
-        tokenLable
-      )
-    )
-      .to.emit("NashEscrow", "TransactionInitEvent")
-      .withArgs(0, owner);
+    await expect(
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    expect(
-      await nashEscrow
+    await expect(
+      nashEscrow
         .connect(address2)
         .agentAcceptWithdrawalTransaction(4, "test phone number")
-    )
-      .to.emit("NashEscrow", "AgentPairingEvent")
-      .withArgs(5, address2.getAddress());
+    ).to.emit(nashEscrow, "AgentPairingEvent");
 
-    expect(await nashEscrow.connect(owner).clientConfirmPayment(4))
-      .to.emit("NashEscrow", "ClientConfirmationEvent")
-      .withArgs(5, owner);
+    expect(await nashEscrow.connect(owner).clientConfirmPayment(4)).to.emit(
+      nashEscrow,
+      "ClientConfirmationEvent"
+    );
 
-    expect(await nashEscrow.connect(address2).agentConfirmPayment(4))
-      .to.emit("NashEscrow", "AgentConfirmationEvent")
-      .withArgs(5, address2.getAddress());
+    expect(await nashEscrow.connect(address2).agentConfirmPayment(4)).to.emit(
+      nashEscrow,
+      "AgentConfirmationEvent"
+    );
 
     const txs = await nashEscrow
       .connect(address2)
