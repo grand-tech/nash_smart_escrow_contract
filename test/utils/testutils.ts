@@ -15,7 +15,7 @@ import { ethers, upgrades } from "hardhat";
  * @property { boolean } clientApproval - true on clients approval.
  * @property { string } clientPaymentDetails - the client`s phone number.
  * @property { string } agentPhoneNumber - the agent`s phone number.
- * @property { string } enxchangeToken - the address of the token being exchanged in the transaction.
+ * @property { string } exchangeToken - the address of the token being exchanged in the transaction.
  */
 export type NashEscrowTransaction = {
   id: number;
@@ -28,8 +28,8 @@ export type NashEscrowTransaction = {
   clientApproval: string;
   clientPaymentDetails: string;
   agentPaymentDetails: string;
-  enxchangeToken: string;
-  exchangeTokenLable: string;
+  exchangeToken: string;
+  exchangeTokenLabel: string;
 };
 
 export async function deployNashEscrowContract() {
@@ -68,8 +68,8 @@ export function convertToNashTransactionObj(
     clientApproval: tx[7],
     agentPaymentDetails: Buffer.from(tx[8], "base64").toString("ascii"),
     clientPaymentDetails: Buffer.from(tx[9], "base64").toString("ascii"),
-    enxchangeToken: tx[10],
-    exchangeTokenLable: tx[11],
+    exchangeToken: tx[10],
+    exchangeTokenLabel: tx[11],
   };
 
   return nashTx;

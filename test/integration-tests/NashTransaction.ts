@@ -4,7 +4,7 @@ import {
   convertToNashTransactionObj,
   deployNashEscrowContract,
   NashEscrowTransaction,
-} from "../testutils";
+} from "../utils/testutils";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Deposit E2E", function () {

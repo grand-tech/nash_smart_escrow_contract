@@ -3,7 +3,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import {
   convertToNashTransactionObj,
   deployNashEscrowContract,
-} from "../testutils";
+} from "../utils/testutils";
 
 describe("Test Get Next un-paired transaction.", function () {
   it("Get unpaired transaction.", async function () {

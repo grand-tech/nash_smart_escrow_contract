@@ -2,7 +2,7 @@ import { expect } from "chai";
 import {
   convertToNashTransactionObj,
   deployNashEscrowContract,
-} from "../testutils";
+} from "../utils/testutils";
 import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { BigNumber } from "ethers";
 

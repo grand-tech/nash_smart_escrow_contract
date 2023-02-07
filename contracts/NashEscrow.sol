@@ -69,7 +69,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         string agentPaymentDetails;
         string clientPaymentDetails;
         address exchangeToken;
-        string exchangeTokenLable;
+        string exchangeTokenLabel;
     }
 
     /**
@@ -101,7 +101,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function initializeWithdrawalTransaction(
         uint256 _amount,
         address _exchangeToken,
-        string calldata _exchangeTokenLable
+        string calldata _exchangeTokenLabel
     ) public payable {
         require(_amount > 0, "Amount to withdraw must be greater than 0.");
 
@@ -119,11 +119,11 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
         newPayment.exchangeToken = _exchangeToken;
-        newPayment.exchangeTokenLable = _exchangeTokenLable;
+        newPayment.exchangeTokenLabel = _exchangeTokenLabel;
 
         bytes memory message = string.concat(
             "You don't have enough ",
-            bytes(_exchangeTokenLable),
+            bytes(_exchangeTokenLabel),
             " to initialize this withdrawl request."
         );
         require(
@@ -146,7 +146,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function initializeDepositTransaction(
         uint256 _amount,
         address _exchangeToken,
-        string calldata _exchangeTokenLable
+        string calldata _exchangeTokenLabel
     ) public {
         require(_amount > 0, "Amount to deposit must be greater than 0.");
 
@@ -163,7 +163,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         newPayment.agentApproval = false;
         newPayment.clientApproval = false;
         newPayment.exchangeToken = _exchangeToken;
-        newPayment.exchangeTokenLable = _exchangeTokenLable;
+        newPayment.exchangeTokenLabel = _exchangeTokenLabel;
 
         emit TransactionInitEvent(newPayment);
     }
@@ -227,7 +227,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         // construct error message incase of an error.
         bytes memory message = string.concat(
             "You don't have enough ",
-            bytes(wtx.exchangeTokenLable),
+            bytes(wtx.exchangeTokenLabel),
             " to accept this request."
         );
 
