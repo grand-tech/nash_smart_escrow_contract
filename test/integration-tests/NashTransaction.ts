@@ -9,7 +9,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Deposit E2E", function () {
   it("Test end to end deposit tx", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -26,7 +26,7 @@ describe("Deposit E2E", function () {
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLable)
+        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     // Check balances after method call.
@@ -88,7 +88,7 @@ describe("Deposit E2E", function () {
 
 describe("Withdrawal E2E", function () {
   it("Test end to end Withdrawal tx", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -105,7 +105,7 @@ describe("Withdrawal E2E", function () {
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+        .initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     // Check balances after method call.

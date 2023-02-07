@@ -8,14 +8,14 @@ import { BigNumber } from "ethers";
 
 describe("Cancel Transaction.", function () {
   it("Cancel deposit transaction.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
     await cUSD.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(nashEscrow.cancelTransaction(0)).to.emit(
@@ -30,7 +30,7 @@ describe("Cancel Transaction.", function () {
   });
 
   it("Cancel withdrawal transaction.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -39,7 +39,7 @@ describe("Cancel Transaction.", function () {
     let clientBalance = await cUSD.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     // Verify the the funds have been moved to the escrow.
@@ -63,7 +63,7 @@ describe("Cancel Transaction.", function () {
   });
 
   it("Test invalid address.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -76,7 +76,7 @@ describe("Cancel Transaction.", function () {
     let clientBalance = await cUSD.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     // Verify the the funds have been moved to the escrow.

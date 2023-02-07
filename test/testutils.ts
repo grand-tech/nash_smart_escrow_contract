@@ -35,9 +35,9 @@ export type NashEscrowTransaction = {
 export async function deployNashEscrowContract() {
   const [owner, address2] = await ethers.getSigners();
 
-  const tokenLable = "cUSD";
-  const CUSD = await ethers.getContractFactory(tokenLable);
-  const cUSD = await CUSD.deploy(100, tokenLable, 0, tokenLable);
+  const tokenLabel = "cUSD";
+  const CUSD = await ethers.getContractFactory(tokenLabel);
+  const cUSD = await CUSD.deploy(100, tokenLabel, 0, tokenLabel);
   await cUSD.deployed();
 
   const NashEscrow = await ethers.getContractFactory("NashEscrow");
@@ -46,7 +46,7 @@ export async function deployNashEscrowContract() {
   });
   await nashEscrow.deployed();
 
-  return { owner, address2, tokenLable, nashEscrow, cUSD };
+  return { owner, address2, tokenLabel, nashEscrow, cUSD };
 }
 
 /**

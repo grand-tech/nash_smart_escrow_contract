@@ -7,7 +7,7 @@ import {
 
 describe("Test Get Next un-paired transaction.", function () {
   it("Get unpaired transaction.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -16,19 +16,19 @@ describe("Test Get Next un-paired transaction.", function () {
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -53,7 +53,7 @@ describe("Test Get Next un-paired transaction.", function () {
 
 describe("Test Get transactions.", function () {
   it("Get unpaired transaction.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -62,19 +62,19 @@ describe("Test Get transactions.", function () {
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -97,7 +97,7 @@ describe("Test Get transactions.", function () {
 
 describe("Test Get My transactions.", function () {
   it("Get My transaction.", async function () {
-    const { owner, address2, tokenLable, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
@@ -106,19 +106,19 @@ describe("Test Get My transactions.", function () {
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -129,7 +129,7 @@ describe("Test Get My transactions.", function () {
 
     // Test get my transactions
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLable)
+      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
