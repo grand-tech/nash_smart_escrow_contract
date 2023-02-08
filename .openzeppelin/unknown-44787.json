@@ -501,7 +501,7 @@
                 "slot": "10"
               },
               {
-                "label": "exchangeTokenLable",
+                "label": "exchangeTokenLabel",
                 "type": "t_string_storage",
                 "offset": 0,
                 "slot": "11"
@@ -706,7 +706,7 @@
                 "slot": "7"
               },
               {
-                "label": "exchangeTokenLable",
+                "label": "exchangeTokenLabel",
                 "type": "t_string_storage",
                 "offset": 0,
                 "slot": "8"
@@ -911,7 +911,7 @@
                 "slot": "7"
               },
               {
-                "label": "exchangeTokenLable",
+                "label": "exchangeTokenLabel",
                 "type": "t_string_storage",
                 "offset": 0,
                 "slot": "8"

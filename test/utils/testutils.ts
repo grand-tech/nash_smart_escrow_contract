@@ -15,7 +15,7 @@ import { ethers, upgrades } from "hardhat";
  * @property { boolean } clientApproval - true on clients approval.
  * @property { string } clientPaymentDetails - the client`s phone number.
  * @property { string } agentPhoneNumber - the agent`s phone number.
- * @property { string } enxchangeToken - the address of the token being exchanged in the transaction.
+ * @property { string } exchangeToken - the address of the token being exchanged in the transaction.
  */
 export type NashEscrowTransaction = {
   id: number;
@@ -28,16 +28,16 @@ export type NashEscrowTransaction = {
   clientApproval: string;
   clientPaymentDetails: string;
   agentPaymentDetails: string;
-  enxchangeToken: string;
-  exchangeTokenLable: string;
+  exchangeToken: string;
+  exchangeTokenLabel: string;
 };
 
 export async function deployNashEscrowContract() {
   const [owner, address2] = await ethers.getSigners();
 
-  const tokenLable = "cUSD";
-  const CUSD = await ethers.getContractFactory(tokenLable);
-  const cUSD = await CUSD.deploy(100, tokenLable, 0, tokenLable);
+  const tokenLabel = "cUSD";
+  const CUSD = await ethers.getContractFactory(tokenLabel);
+  const cUSD = await CUSD.deploy(100, tokenLabel, 0, tokenLabel);
   await cUSD.deployed();
 
   const NashEscrow = await ethers.getContractFactory("NashEscrow");
@@ -46,7 +46,7 @@ export async function deployNashEscrowContract() {
   });
   await nashEscrow.deployed();
 
-  return { owner, address2, tokenLable, nashEscrow, cUSD };
+  return { owner, address2, tokenLabel, nashEscrow, cUSD };
 }
 
 /**
@@ -66,10 +66,10 @@ export function convertToNashTransactionObj(
     amount: parseInt(tx[5]),
     agentApproval: tx[6],
     clientApproval: tx[7],
-    agentPaymentDetails: Buffer.from(tx[8], "base64").toString("ascii"),
-    clientPaymentDetails: Buffer.from(tx[9], "base64").toString("ascii"),
-    enxchangeToken: tx[10],
-    exchangeTokenLable: tx[11],
+    agentPaymentDetails: tx[8],
+    clientPaymentDetails: tx[9],
+    exchangeToken: tx[10],
+    exchangeTokenLabel: tx[11],
   };
 
   return nashTx;

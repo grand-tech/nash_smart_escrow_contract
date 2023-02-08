@@ -41,7 +41,7 @@ export declare namespace NashEscrow {
     agentPaymentDetails: PromiseOrValue<string>;
     clientPaymentDetails: PromiseOrValue<string>;
     exchangeToken: PromiseOrValue<string>;
-    exchangeTokenLable: PromiseOrValue<string>;
+    exchangeTokenLabel: PromiseOrValue<string>;
   };
 
   export type NashTransactionStructOutput = [
@@ -69,7 +69,7 @@ export declare namespace NashEscrow {
     agentPaymentDetails: string;
     clientPaymentDetails: string;
     exchangeToken: string;
-    exchangeTokenLable: string;
+    exchangeTokenLabel: string;
   };
 }
 
@@ -511,14 +511,14 @@ export interface NashEscrow extends BaseContract {
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
@@ -609,14 +609,14 @@ export interface NashEscrow extends BaseContract {
   initializeDepositTransaction(
     _amount: PromiseOrValue<BigNumberish>,
     _exchangeToken: PromiseOrValue<string>,
-    _exchangeTokenLable: PromiseOrValue<string>,
+    _exchangeTokenLabel: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   initializeWithdrawalTransaction(
     _amount: PromiseOrValue<BigNumberish>,
     _exchangeToken: PromiseOrValue<string>,
-    _exchangeTokenLable: PromiseOrValue<string>,
+    _exchangeTokenLabel: PromiseOrValue<string>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
@@ -705,14 +705,14 @@ export interface NashEscrow extends BaseContract {
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
@@ -856,14 +856,14 @@ export interface NashEscrow extends BaseContract {
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
@@ -959,14 +959,14 @@ export interface NashEscrow extends BaseContract {
     initializeDepositTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     initializeWithdrawalTransaction(
       _amount: PromiseOrValue<BigNumberish>,
       _exchangeToken: PromiseOrValue<string>,
-      _exchangeTokenLable: PromiseOrValue<string>,
+      _exchangeTokenLabel: PromiseOrValue<string>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
