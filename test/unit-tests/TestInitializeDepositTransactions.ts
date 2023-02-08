@@ -50,6 +50,14 @@ describe("Transaction Initialize Deposit Transaction.", function () {
       nashTx.exchangeTokenLabel,
       "The transaction type should be deposit"
     ).to.equal("cUSD");
+
+    // Assert autoincrement of next transaction id.
+
+    const nextTxIndex = await nashEscrow.getNextTransactionIndex();
+    expect(nextTxIndex).to.equal(
+      1,
+      "Next transaction index has been updated properly"
+    );
   });
 
   it("Check if it reverts with amount as zero...", async function () {
