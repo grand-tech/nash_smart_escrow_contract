@@ -520,7 +520,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         NashTransaction memory wtx = escrowTransactions[_transactionid];
         require(
             msg.sender == wtx.agentAddress,
-            "Action can only be performed by the agent"
+            "Action can only be performed by the agent!!"
         );
         _;
     }
@@ -584,7 +584,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         NashTransaction memory wtx = escrowTransactions[_transactionid];
         require(
             wtx.status == Status.AWAITING_CONFIRMATIONS,
-            "Action can only be performed on paired transactions!!"
+            "Action can only be performed on transactions awaiting approval!!"
         );
         _;
     }

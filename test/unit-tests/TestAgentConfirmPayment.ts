@@ -7,7 +7,7 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { BigNumber } from "ethers";
 import { PAYMENT_INFO } from "../utils/test-constants";
 
-describe("Client write payment information", function () {
+describe("Agent confirm/approve transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
     const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
@@ -35,6 +35,10 @@ describe("Client write payment information", function () {
         .clientWritePaymentInformation(0, PAYMENT_INFO)
     ).to.emit(nashEscrow, "SavedClientCommentEvent");
 
+    await expect(
+      nashEscrow.connect(agentSigner).agentConfirmPayment(0)
+    ).to.emit(nashEscrow, "AgentConfirmationEvent");
+
     const tx = await nashEscrow.getTransactionByIndex(0);
     const nashTx = convertToNashTransactionObj(tx);
 
@@ -52,7 +56,7 @@ describe("Client write payment information", function () {
     );
     expect(nashTx.status).to.equal(1, "The transaction status should be 1");
     expect(nashTx.amount).to.equal(5, "The amount should be 5 units");
-    expect(nashTx.agentApproval, "Agent approval should be false").to.be.false;
+    expect(nashTx.agentApproval, "Agent approval should be true").to.be.true;
     expect(nashTx.clientApproval, "Client approval should be false").to.be
       .false;
     expect(nashTx.clientPaymentDetails).to.equal(
@@ -81,7 +85,7 @@ describe("Client write payment information", function () {
     );
   });
 
-  it("Test with agents address...", async function () {
+  it("Test with clients address...", async function () {
     const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
@@ -104,9 +108,9 @@ describe("Client write payment information", function () {
 
     await expect(
       nashEscrow
-        .connect(agentSigner)
-        .clientWritePaymentInformation(0, PAYMENT_INFO)
-    ).to.revertedWith("Action can only be performed by the client!!");
+        .connect(clientSigner)
+        .agentConfirmPayment(0)
+    ).to.revertedWith("Action can only be performed by the agent!!");
   });
 
   it("Test with confirmed transaction.", async function () {
@@ -141,7 +145,7 @@ describe("Client write payment information", function () {
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .clientWritePaymentInformation(0, PAYMENT_INFO)
+        .agentConfirmPayment(0)
     ).to.revertedWith("Action can only be performed on transactions awaiting approval!!");
   });
 });
