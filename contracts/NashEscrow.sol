@@ -584,7 +584,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         NashTransaction memory wtx = escrowTransactions[_transactionid];
         require(
             wtx.status == Status.AWAITING_CONFIRMATIONS,
-            "Transaction is not awaiting confirmation from anyone."
+            "Action can only be performed on paired transactions!!"
         );
         _;
     }
