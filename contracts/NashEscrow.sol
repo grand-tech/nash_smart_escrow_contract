@@ -204,20 +204,12 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
 
-        // construct error message incase of an error.
-        bytes memory message = string.concat(
-            "You don't have enough ",
-            bytes(wtx.exchangeTokenLabel),
-            " to accept this request."
-        );
-
         require(
             ERC20(wtx.exchangeToken).transferFrom(
                 msg.sender,
                 address(this),
                 wtx.amount
-            ),
-            string(message)
+            )
         );
         wtx.agentPaymentDetails = _paymentDetails;
         emit AgentPairingEvent(wtx);
@@ -635,7 +627,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         require(
             ERC20(wtx.exchangeToken).balanceOf(address(msg.sender)) >
                 wtx.amount,
-            "Your balance must be greater than the transaction gross amount."
+            "Your balance must be greater than the transaction amount."
         );
         _;
     }

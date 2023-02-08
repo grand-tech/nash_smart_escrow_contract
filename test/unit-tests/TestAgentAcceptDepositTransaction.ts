@@ -7,42 +7,56 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 import { BigNumber } from "ethers";
 import { PAYMENT_INFO } from "../utils/test-constants";
 
-describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
+describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
     const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
-    let clientBalance = await cUSD.balanceOf(owner.address);
-    expect(clientBalance).to.equal(BigNumber.from("100"));
-    await cUSD.approve(nashEscrow.address, 10);
+    const clientSigner = address2;
+    const agentSigner = owner;
 
-    await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
-    ).to.emit(nashEscrow, "TransactionInitEvent");
+    let clientBalance = await cUSD.balanceOf(clientSigner.address);
+    let agentBalance = await cUSD.balanceOf(agentSigner.address);
 
-    clientBalance = await cUSD.balanceOf(owner.address);
-    expect(clientBalance).to.equal(BigNumber.from("95"));
+    expect(clientBalance).to.equal(BigNumber.from("0"));
+    expect(agentBalance).to.equal(BigNumber.from("100"));
+    await cUSD.connect(agentSigner).approve(nashEscrow.address, 10);
 
     await expect(
       nashEscrow
-        .connect(address2)
-        .agentAcceptWithdrawalTransaction(0, PAYMENT_INFO)
+        .connect(clientSigner)
+        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
+
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    expect(clientBalance).to.equal(BigNumber.from("0"));
+
+    await expect(
+      nashEscrow
+        .connect(agentSigner)
+        .agentAcceptDepositTransaction(0, PAYMENT_INFO)
     ).to.emit(nashEscrow, "AgentPairingEvent");
+
+    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    agentBalance = await cUSD.balanceOf(agentSigner.address);
+
+    expect(clientBalance).to.equal(BigNumber.from("0"));
+    expect(agentBalance).to.equal(BigNumber.from("95"));
 
     const tx = await nashEscrow.getTransactionByIndex(0);
     const nashTx = convertToNashTransactionObj(tx);
 
     expect(nashTx.txType).to.equal(
-      1,
-      "The transaction type should be withdraw"
+      0,
+      "The transaction type should be deposit."
     );
     expect(nashTx.clientAddress).equal(
-      owner.address,
+      clientSigner.address,
       "Should have the correct client address"
     );
     expect(nashTx.agentAddress).to.equal(
-      address2.address,
+      agentSigner.address,
       "Should have an agent address"
     );
     expect(nashTx.status).to.equal(1, "The transaction status should be 1");
@@ -83,40 +97,21 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
 
     await cUSD.approve(nashEscrow.address, 10);
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
-    ).to.emit(nashEscrow, "TransactionInitEvent");
-
-    await expect(
-      nashEscrow.agentAcceptWithdrawalTransaction(0, PAYMENT_INFO)
-    ).to.revertedWith("Action can not be performed by the client!!");
-  });
-
-  it("Test on deposit transaction.", async function () {
-    const { address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
-      deployNashEscrowContract
-    );
-
-    await cUSD.approve(nashEscrow.address, 10);
-
-    await expect(
       nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
-      nashEscrow
-        .connect(address2)
-        .agentAcceptWithdrawalTransaction(0, PAYMENT_INFO)
-    ).to.revertedWith(
-      "Action can only be performed for withdraw transactions only!!"
-    );
+      nashEscrow.agentAcceptDepositTransaction(0, PAYMENT_INFO)
+    ).to.revertedWith("Action can not be performed by the client!!");
   });
 
-  it("Test with already paired transaction...", async function () {
+  it("Test on withdraw transaction.", async function () {
     const { address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
       deployNashEscrowContract
     );
 
     await cUSD.approve(nashEscrow.address, 10);
+
     await expect(
       nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
@@ -124,13 +119,61 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
     await expect(
       nashEscrow
         .connect(address2)
-        .agentAcceptWithdrawalTransaction(0, PAYMENT_INFO)
+        .agentAcceptDepositTransaction(0, PAYMENT_INFO)
+    ).to.revertedWith(
+      "Action can only be performed for deposit transactions only!!"
+    );
+  });
+
+  it("Test with already paired transaction...", async function () {
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+      deployNashEscrowContract
+    );
+
+    const clientSigner = address2;
+    const agentSigner = owner;
+
+    await cUSD.approve(nashEscrow.address, 10);
+    await expect(
+      nashEscrow
+        .connect(clientSigner)
+        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
+
+    await expect(
+      nashEscrow
+        .connect(agentSigner)
+        .agentAcceptDepositTransaction(0, PAYMENT_INFO)
     ).to.emit(nashEscrow, "AgentPairingEvent");
 
     await expect(
       nashEscrow
-        .connect(address2)
-        .agentAcceptWithdrawalTransaction(0, PAYMENT_INFO)
+        .connect(agentSigner)
+        .agentAcceptDepositTransaction(0, PAYMENT_INFO)
     ).to.revertedWith("Transaction already paired to an agent!!");
+  });
+
+  it("Test agent with invalid balance...", async function () {
+    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+      deployNashEscrowContract
+    );
+
+    const clientSigner = owner;
+    const agentSigner = address2;
+
+    await cUSD.approve(nashEscrow.address, 10);
+    await expect(
+      nashEscrow
+        .connect(clientSigner)
+        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+    ).to.emit(nashEscrow, "TransactionInitEvent");
+
+    await expect(
+      nashEscrow
+        .connect(agentSigner)
+        .agentAcceptDepositTransaction(0, PAYMENT_INFO)
+    ).to.revertedWith(
+      "Your balance must be greater than the transaction amount."
+    );
   });
 });
