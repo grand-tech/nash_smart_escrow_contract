@@ -121,18 +121,12 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         newPayment.exchangeToken = _exchangeToken;
         newPayment.exchangeTokenLabel = _exchangeTokenLabel;
 
-        bytes memory message = string.concat(
-            "You don't have enough ",
-            bytes(_exchangeTokenLabel),
-            " to initialize this withdrawl request."
-        );
         require(
             ERC20(_exchangeToken).transferFrom(
                 msg.sender,
                 address(this),
                 newPayment.amount
-            ),
-            string(message)
+            )
         );
 
         emit TransactionInitEvent(newPayment);
