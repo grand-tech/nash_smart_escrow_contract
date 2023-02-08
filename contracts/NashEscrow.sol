@@ -163,20 +163,6 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     }
 
     /**
-     * Writes the encrypted client information inot the smart contract.
-     * @param _transactionid the transaction id.
-     * @param _comment the encrypted comment.
-     */
-    function clientWritePaymentInformation(
-        uint256 _transactionid,
-        string calldata _comment
-    ) public clientOnly(_transactionid) awaitConfirmation(_transactionid) {
-        NashTransaction storage wtx = escrowTransactions[_transactionid];
-        wtx.clientPaymentDetails = _comment;
-        emit SavedClientCommentEvent(wtx);
-    }
-
-    /**
      * Marks pairs the client to an agent to attent to the transaction.
      * @param _transactionid the identifire of the transaction.
      * @param _paymentDetails the agents phone number.
@@ -235,6 +221,20 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         );
         wtx.agentPaymentDetails = _paymentDetails;
         emit AgentPairingEvent(wtx);
+    }
+
+    /**
+     * Writes the encrypted client information inot the smart contract.
+     * @param _transactionid the transaction id.
+     * @param _comment the encrypted comment.
+     */
+    function clientWritePaymentInformation(
+        uint256 _transactionid,
+        string calldata _comment
+    ) public clientOnly(_transactionid) awaitConfirmation(_transactionid) {
+        NashTransaction storage wtx = escrowTransactions[_transactionid];
+        wtx.clientPaymentDetails = _comment;
+        emit SavedClientCommentEvent(wtx);
     }
 
     /**
@@ -553,7 +553,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         NashTransaction memory wtx = escrowTransactions[_transactionid];
         require(
             wtx.txType == TransactionType.WITHDRAWAL,
-            "Action can only be performed for withdrawal transactions only!!"
+            "Action can only be performed for withdraw transactions only!!"
         );
         _;
     }

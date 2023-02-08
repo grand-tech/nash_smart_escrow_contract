@@ -40,29 +40,29 @@ describe("Transaction Initialize Withdraw Transaction.", function () {
       EMPTY_ADDRESS,
       "Should not have an agent address"
     );
+    expect(nashTx.status).to.equal(0, "The transaction status should be 0");
     expect(nashTx.amount).to.equal(5, "The amount should be 5 units");
     expect(nashTx.agentApproval, "Agent approval should be false").to.be.false;
     expect(nashTx.clientApproval, "Client approval should be false").to.be
       .false;
-    expect(
-      nashTx.clientPaymentDetails,
-      "The transaction type should be deposit"
-    ).to.equal("");
-    expect(
-      nashTx.agentPaymentDetails,
-      "The transaction type should be deposit"
-    ).to.equal("");
-    expect(
-      nashTx.exchangeToken,
-      "The transaction type should be deposit"
-    ).to.equal(cUSD.address);
-    expect(
-      nashTx.exchangeTokenLabel,
-      "The transaction type should be deposit"
-    ).to.equal("cUSD");
+    expect(nashTx.clientPaymentDetails).to.equal(
+      "",
+      "Should not have the client`s payment details."
+    );
+    expect(nashTx.agentPaymentDetails).to.equal(
+      "",
+      "Should not have the agent`s payment details."
+    );
+    expect(nashTx.exchangeToken).to.equal(
+      cUSD.address,
+      "Should not have the correct exchange token address."
+    );
+    expect(nashTx.exchangeTokenLabel).to.equal(
+      "cUSD",
+      "Should not have the correct exchange token label."
+    );
 
     // Assert autoincrement of next transaction id.
-
     const nextTxIndex = await nashEscrow.getNextTransactionIndex();
     expect(nextTxIndex).to.equal(
       1,
@@ -110,9 +110,7 @@ describe("Transaction Initialize Withdraw Transaction.", function () {
       nashEscrow
         .connect(address2)
         .initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
-    ).to.revertedWith(
-      "Balance not enough"
-    );
+    ).to.revertedWith("Balance not enough");
 
     clientBalance = await cUSD.balanceOf(address2.address);
     expect(clientBalance).to.equal(BigNumber.from("0"));

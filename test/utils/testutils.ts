@@ -66,8 +66,8 @@ export function convertToNashTransactionObj(
     amount: parseInt(tx[5]),
     agentApproval: tx[6],
     clientApproval: tx[7],
-    agentPaymentDetails: Buffer.from(tx[8], "base64").toString("ascii"),
-    clientPaymentDetails: Buffer.from(tx[9], "base64").toString("ascii"),
+    agentPaymentDetails: tx[8],
+    clientPaymentDetails: tx[9],
     exchangeToken: tx[10],
     exchangeTokenLabel: tx[11],
   };

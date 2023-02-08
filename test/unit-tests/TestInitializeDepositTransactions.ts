@@ -30,26 +30,27 @@ describe("Transaction Initialize Deposit Transaction.", function () {
       EMPTY_ADDRESS,
       "Should not have an agent address"
     );
+    expect(nashTx.status).to.equal(0, "The transaction status should be 0");
     expect(nashTx.amount).to.equal(5, "The amount should be 5 units");
     expect(nashTx.agentApproval, "Agent approval should be false").to.be.false;
     expect(nashTx.clientApproval, "Client approval should be false").to.be
       .false;
-    expect(
-      nashTx.clientPaymentDetails,
-      "The transaction type should be deposit"
-    ).to.equal("");
-    expect(
-      nashTx.agentPaymentDetails,
-      "The transaction type should be deposit"
-    ).to.equal("");
-    expect(
-      nashTx.exchangeToken,
-      "The transaction type should be deposit"
-    ).to.equal(cUSD.address);
-    expect(
-      nashTx.exchangeTokenLabel,
-      "The transaction type should be deposit"
-    ).to.equal("cUSD");
+    expect(nashTx.clientPaymentDetails).to.equal(
+      "",
+      "Should not have client`s encrypted payment information."
+    );
+    expect(nashTx.agentPaymentDetails).to.equal(
+      "",
+      "Should not have agent`s encrypted payment information."
+    );
+    expect(nashTx.exchangeToken).to.equal(
+      cUSD.address,
+      "Should have the correct exchange token address."
+    );
+    expect(nashTx.exchangeTokenLabel).to.equal(
+      "cUSD",
+      "Should have the correct exchange token label."
+    );
 
     // Assert autoincrement of next transaction id.
 
