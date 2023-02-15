@@ -929,6 +929,211 @@
           }
         }
       }
+    },
+    "cdd124eb0603e23608846d6340b444ab6d64e957bc0d0627c51f7a5a3667a2c5": {
+      "address": "0xA97CE210C67c56065C05D31CAaAEBa355Fed7147",
+      "txHash": "0xc6a493695e3c6ddf17934a4d887b9467c977d3659b89bb045067f24555187c66",
+      "layout": {
+        "solcVersion": "0.8.7",
+        "storage": [
+          {
+            "label": "_initialized",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint8",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:62",
+            "retypedFrom": "bool"
+          },
+          {
+            "label": "_initializing",
+            "offset": 1,
+            "slot": "0",
+            "type": "t_bool",
+            "contract": "Initializable",
+            "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:67"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_array(t_uint256)50_storage",
+            "contract": "ContextUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable.sol:36"
+          },
+          {
+            "label": "_owner",
+            "offset": 0,
+            "slot": "51",
+            "type": "t_address",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:22"
+          },
+          {
+            "label": "__gap",
+            "offset": 0,
+            "slot": "52",
+            "type": "t_array(t_uint256)49_storage",
+            "contract": "OwnableUpgradeable",
+            "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:94"
+          },
+          {
+            "label": "nextTransactionID",
+            "offset": 0,
+            "slot": "101",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:10"
+          },
+          {
+            "label": "successfulTransactionsCounter",
+            "offset": 0,
+            "slot": "102",
+            "type": "t_uint256",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:12"
+          },
+          {
+            "label": "escrowTransactions",
+            "offset": 0,
+            "slot": "103",
+            "type": "t_mapping(t_uint256,t_struct(NashTransaction)1432_storage)",
+            "contract": "NashEscrow",
+            "src": "contracts/NashEscrow.sol:32"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_array(t_uint256)49_storage": {
+            "label": "uint256[49]",
+            "numberOfBytes": "1568"
+          },
+          "t_array(t_uint256)50_storage": {
+            "label": "uint256[50]",
+            "numberOfBytes": "1600"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_enum(Status)1405": {
+            "label": "enum NashEscrow.Status",
+            "members": [
+              "AWAITING_AGENT",
+              "AWAITING_CONFIRMATIONS",
+              "CONFIRMED",
+              "CANCELED",
+              "DONE"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_enum(TransactionType)1399": {
+            "label": "enum NashEscrow.TransactionType",
+            "members": [
+              "DEPOSIT",
+              "WITHDRAWAL"
+            ],
+            "numberOfBytes": "1"
+          },
+          "t_mapping(t_uint256,t_struct(NashTransaction)1432_storage)": {
+            "label": "mapping(uint256 => struct NashEscrow.NashTransaction)",
+            "numberOfBytes": "32"
+          },
+          "t_string_storage": {
+            "label": "string",
+            "numberOfBytes": "32"
+          },
+          "t_struct(NashTransaction)1432_storage": {
+            "label": "struct NashEscrow.NashTransaction",
+            "members": [
+              {
+                "label": "id",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "txType",
+                "type": "t_enum(TransactionType)1399",
+                "offset": 0,
+                "slot": "1"
+              },
+              {
+                "label": "clientAddress",
+                "type": "t_address",
+                "offset": 1,
+                "slot": "1"
+              },
+              {
+                "label": "agentAddress",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "2"
+              },
+              {
+                "label": "status",
+                "type": "t_enum(Status)1405",
+                "offset": 20,
+                "slot": "2"
+              },
+              {
+                "label": "amount",
+                "type": "t_uint256",
+                "offset": 0,
+                "slot": "3"
+              },
+              {
+                "label": "agentApproval",
+                "type": "t_bool",
+                "offset": 0,
+                "slot": "4"
+              },
+              {
+                "label": "clientApproval",
+                "type": "t_bool",
+                "offset": 1,
+                "slot": "4"
+              },
+              {
+                "label": "agentPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "5"
+              },
+              {
+                "label": "clientPaymentDetails",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "6"
+              },
+              {
+                "label": "exchangeToken",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "7"
+              },
+              {
+                "label": "exchangeTokenLabel",
+                "type": "t_string_storage",
+                "offset": 0,
+                "slot": "8"
+              }
+            ],
+            "numberOfBytes": "288"
+          },
+          "t_uint256": {
+            "label": "uint256",
+            "numberOfBytes": "32"
+          },
+          "t_uint8": {
+            "label": "uint8",
+            "numberOfBytes": "1"
+          }
+        }
+      }
     }
   }
 }
