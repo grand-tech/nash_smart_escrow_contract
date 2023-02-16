@@ -58,7 +58,8 @@ const config: HardhatUserConfig = {
       url: "https://forno.celo.org",
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
-      chainId: 42220,
+      allowUnlimitedContractSize: true,
+      chainId: 42220
     },
   },
   gasReporter: {
