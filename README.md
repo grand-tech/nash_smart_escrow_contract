@@ -6,7 +6,7 @@ The smart contract has been designed to work with any ECR20 token
 on any EVM based chain.
 
 
-# Hardhat commands. 
+## Hardhat commands. 
 
 ```shell
 npx hardhat accounts
@@ -27,7 +27,7 @@ npx solhint 'contracts/**/*.sol'
 npx solhint 'contracts/**/*.sol' --fix
 ```
 
-# Etherscan verification.
+## Celoscan verification.
 
 To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
 
@@ -43,7 +43,7 @@ Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_
 npx hardhat verify --network alfajores DEPLOYED_CONTRACT_ADDRESS
 ```
 
-# Creating upgradable smart contracts that are ownable.
+## Creating upgradable smart contracts that are ownable.
 
 https://forum.openzeppelin.com/t/how-to-use-ownable-with-upgradeable-contract/3336
 
