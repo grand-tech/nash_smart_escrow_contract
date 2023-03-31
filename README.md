@@ -1,7 +1,7 @@
 # Nash Escrow Smart Contract.
 This project contain smart contracts that cater for P2P top up
 and withdrawal transactions using asymetric comment encryption
-to obfuscate payment information. 
+to obfuscate payment information on CELO blockchain. 
 The smart contract has been designed to work with any ECR20 token
 on any EVM based chain.
 
