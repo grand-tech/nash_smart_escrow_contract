@@ -34,13 +34,16 @@ const config: HardhatUserConfig = {
         settings: {
           optimizer: {
             enabled: true,
-            runs: 200,
+            runs: 1000,
           },
         },
       },
     ],
   },
   networks: {
+    hardhat: {
+      allowUnlimitedContractSize: true,
+    },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:
@@ -59,7 +62,7 @@ const config: HardhatUserConfig = {
       accounts:
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
       allowUnlimitedContractSize: true,
-      chainId: 42220
+      chainId: 42220,
     },
   },
   gasReporter: {
