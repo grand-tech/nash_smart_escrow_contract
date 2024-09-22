@@ -5,49 +5,8 @@
  */
 pragma solidity 0.8.24;
 
-import "hardhat/console.sol";
-
-/**
- * Math operations with safety checks
- */
-library SafeMath {
-    function safeAdd(uint256 a, uint256 b) internal pure returns (uint256) {
-        uint256 c = a + b;
-        require(c >= a, "SafeMath: addition overflow");
-
-        return c;
-    }
-
-    function safeSub(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b <= a, "SafeMath: subtraction overflow");
-        uint256 c = a - b;
-
-        return c;
-    }
-
-    function safeMul(uint256 a, uint256 b) internal pure returns (uint256) {
-        if (a == 0) {
-            return 0;
-        }
-
-        uint256 c = a * b;
-        require(c / a == b, "SafeMath: multiplication overflow");
-
-        return c;
-    }
-
-    function safeDiv(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b > 0, "SafeMath: division by zero");
-        uint256 c = a / b;
-
-        return c;
-    }
-
-    function safeMod(uint256 a, uint256 b) internal pure returns (uint256) {
-        require(b != 0, "SafeMath: modulo by zero");
-        return a % b;
-    }
-}
+// import "hardhat/console.sol";
+import "node_modules/@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 /**
  * cUSD Contract
@@ -105,10 +64,10 @@ contract cUSD {
         require(balanceOf[msg.sender] >= _value, "Balance not enough"); // Check if the sender has enough
         require(balanceOf[_to] + _value >= balanceOf[_to], "Overflow"); // Check for overflows
 
-        uint previousBalances = balanceOf[msg.sender] + balanceOf[_to];
+        uint previousBalances = balanceOf[_to].add(balanceOf[_to]);
 
-        balanceOf[msg.sender] = SafeMath.safeSub(balanceOf[msg.sender], _value); // Subtract from the sender
-        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value); // Add the same to the recipient
+        balanceOf[msg.sender] = balanceOf[msg.sender].sub(_value); // Subtract from the sender
+        balanceOf[_to] = balanceOf[_to].add(_value); // Add the same to the recipient
 
         emit Transfer(msg.sender, _to, _value); // Notify anyone listening that this transfer took place
 
@@ -174,13 +133,10 @@ contract cUSD {
             "Cannot over allowance"
         );
 
-        balanceOf[_from] = SafeMath.safeSub(balanceOf[_from], _value);
-        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _value);
+        balanceOf[_from] = balanceOf[_from].sub(_value);
+        balanceOf[_to] = balanceOf[_to].add(_value);
 
-        allowance[_from][msg.sender] = SafeMath.safeSub(
-            allowance[_from][msg.sender],
-            _value
-        );
+        allowance[_from][msg.sender] = allowance[_from][msg.sender].sub(_value);
 
         emit Transfer(_from, _to, _value);
 
@@ -237,8 +193,8 @@ contract cUSD {
         require(balanceOf[_to] + _amount > balanceOf[_to]);
         require(totalSupply + _amount > totalSupply);
 
-        totalSupply = SafeMath.safeAdd(totalSupply, _amount);
-        balanceOf[_to] = SafeMath.safeAdd(balanceOf[_to], _amount);
+        totalSupply = totalSupply.add(_amount);
+        balanceOf[_to] = balanceOf[_to].add(_amount);
 
         emit Mint(_to, _amount);
 
@@ -269,8 +225,8 @@ contract cUSD {
     function burn(uint256 _amount) external onlyDestroyer {
         require(balanceOf[destroyer] >= _amount && _amount > 0);
 
-        balanceOf[destroyer] = SafeMath.safeSub(balanceOf[destroyer], _amount);
-        totalSupply = SafeMath.safeSub(totalSupply, _amount);
+        balanceOf[destroyer] = balanceOf[destroyer].sub(_amount);
+        totalSupply = totalSupply.sub(_amount);
 
         emit Burn(_amount);
     }
