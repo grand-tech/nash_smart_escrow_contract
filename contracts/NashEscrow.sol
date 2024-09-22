@@ -4,9 +4,14 @@ pragma solidity 0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
 import "hardhat/console.sol";
 
-contract NashEscrow is Initializable, OwnableUpgradeable {
+contract NashEscrow is
+    Initializable,
+    OwnableUpgradeable,
+    ReentrancyGuardUpgradeable
+{
     uint256 private nextTransactionID;
 
     uint256 private successfulTransactionsCounter;
@@ -78,6 +83,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
     function initialize() external initializer {
         __Context_init_unchained();
         __Ownable_init_unchained();
+        __ReentrancyGuard_init();
     }
 
     /**
@@ -102,7 +108,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         uint256 _amount,
         address _exchangeToken,
         string calldata _exchangeTokenLabel
-    ) public payable {
+    ) public payable nonReentrant {
         require(_amount > 0, "Amount to withdraw must be greater than 0.");
 
         uint256 wtxID = nextTransactionID;
@@ -198,11 +204,13 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         depositsOnly(_transactionid)
         nonClientOnly(_transactionid)
         balanceGreaterThanAmount(_transactionid)
+        nonReentrant
     {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
 
         wtx.agentAddress = msg.sender;
         wtx.status = Status.AWAITING_CONFIRMATIONS;
+        wtx.agentPaymentDetails = _paymentDetails;
 
         require(
             ERC20(wtx.exchangeToken).transferFrom(
@@ -211,7 +219,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
                 wtx.amount
             )
         );
-        wtx.agentPaymentDetails = _paymentDetails;
+
         emit AgentPairingEvent(wtx);
     }
 
@@ -278,6 +286,7 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
         private
         confirmationComplete(_transactionid)
         agentOrClientOnly(_transactionid)
+        nonReentrant
     {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
         address targetAddress;
@@ -287,12 +296,15 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             // Transafer the amount to the agent address.
             targetAddress = wtx.agentAddress;
         }
+
+        successfulTransactionsCounter++;
+        wtx.status = Status.DONE;
+
         require(
             ERC20(wtx.exchangeToken).transfer(targetAddress, wtx.amount),
             "Transaction failed."
         );
-        successfulTransactionsCounter++;
-        wtx.status = Status.DONE;
+
         emit TransactionCompletionEvent(wtx);
     }
 
@@ -303,12 +315,20 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
      */
     function cancelTransaction(
         uint256 _transactionid
-    ) public payable clientOnly(_transactionid) awaitAgentOnly(_transactionid) {
+    )
+        public
+        payable
+        nonReentrant
+        clientOnly(_transactionid)
+        awaitAgentOnly(_transactionid)
+    {
         NashTransaction storage wtx = escrowTransactions[_transactionid];
-
-        if (wtx.txType == TransactionType.DEPOSIT) {
-            wtx.status = Status.CANCELED;
-        } else {
+        wtx.status = Status.CANCELED; // update the state before external calls. Should revert state if fails.
+        if (wtx.txType == TransactionType.WITHDRAWAL) {
+            // require(
+            //     ERC20(wtx.exchangeToken).balanceOf(address(this)) > wtx.amount,
+            //     "Escrows balance is less than the required amount!!!. Try agin later."
+            // );
             require(
                 ERC20(wtx.exchangeToken).transfer(
                     wtx.clientAddress,
@@ -316,7 +336,6 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
                 ),
                 "Transaction failed."
             );
-            wtx.status = Status.CANCELED;
         }
         emit TransactionCanceledEvent(wtx);
     }
@@ -429,6 +448,32 @@ contract NashEscrow is Initializable, OwnableUpgradeable {
             }
         }
         return ts;
+    }
+
+    /**
+     * Returns the amount of locked tocken.
+     * @param tokenAddress the address of the locked token.
+     * @return the amount of locked token.
+     */
+    function checkLockedTokenAmount(
+        address tokenAddress
+    ) public view returns (uint256) {
+        return ERC20(tokenAddress).balanceOf(address(this));
+    }
+
+    /**
+     * Withdraw/recover a certain amount of tokens by admin/owner.
+     * @param tokenAddress the token to be recovered.
+     * @param amount the amount of tokens to be recovered.
+     */
+    function withdrawLockedTokens(
+        address tokenAddress,
+        uint256 amount
+    ) public onlyOwner {
+        require(
+            ERC20(tokenAddress).transfer(msg.sender, amount),
+            "Error recovering tokens."
+        );
     }
 
     /**

@@ -10,6 +10,8 @@ export type { OwnableUpgradeable } from "./@openzeppelin/contracts-upgradeable/a
 export { OwnableUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable__factory";
 export type { Initializable } from "./@openzeppelin/contracts-upgradeable/proxy/utils/Initializable";
 export { Initializable__factory } from "./factories/@openzeppelin/contracts-upgradeable/proxy/utils/Initializable__factory";
+export type { ReentrancyGuardUpgradeable } from "./@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable";
+export { ReentrancyGuardUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable__factory";
 export type { ContextUpgradeable } from "./@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable";
 export { ContextUpgradeable__factory } from "./factories/@openzeppelin/contracts-upgradeable/utils/ContextUpgradeable__factory";
 export type { ERC20 } from "./@openzeppelin/contracts/token/ERC20/ERC20";

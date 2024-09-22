@@ -79,6 +79,7 @@ export interface NashEscrowInterface extends utils.Interface {
     "agentAcceptWithdrawalTransaction(uint256,string)": FunctionFragment;
     "agentConfirmPayment(uint256)": FunctionFragment;
     "cancelTransaction(uint256)": FunctionFragment;
+    "checkLockedTokenAmount(address)": FunctionFragment;
     "clientConfirmPayment(uint256)": FunctionFragment;
     "clientWritePaymentInformation(uint256,string)": FunctionFragment;
     "countSuccessfulTransactions()": FunctionFragment;
@@ -94,6 +95,7 @@ export interface NashEscrowInterface extends utils.Interface {
     "owner()": FunctionFragment;
     "renounceOwnership()": FunctionFragment;
     "transferOwnership(address)": FunctionFragment;
+    "withdrawLockedTokens(address,uint256)": FunctionFragment;
   };
 
   getFunction(
@@ -102,6 +104,7 @@ export interface NashEscrowInterface extends utils.Interface {
       | "agentAcceptWithdrawalTransaction"
       | "agentConfirmPayment"
       | "cancelTransaction"
+      | "checkLockedTokenAmount"
       | "clientConfirmPayment"
       | "clientWritePaymentInformation"
       | "countSuccessfulTransactions"
@@ -117,6 +120,7 @@ export interface NashEscrowInterface extends utils.Interface {
       | "owner"
       | "renounceOwnership"
       | "transferOwnership"
+      | "withdrawLockedTokens"
   ): FunctionFragment;
 
   encodeFunctionData(
@@ -134,6 +138,10 @@ export interface NashEscrowInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "cancelTransaction",
     values: [PromiseOrValue<BigNumberish>]
+  ): string;
+  encodeFunctionData(
+    functionFragment: "checkLockedTokenAmount",
+    values: [PromiseOrValue<string>]
   ): string;
   encodeFunctionData(
     functionFragment: "clientConfirmPayment",
@@ -209,6 +217,10 @@ export interface NashEscrowInterface extends utils.Interface {
     functionFragment: "transferOwnership",
     values: [PromiseOrValue<string>]
   ): string;
+  encodeFunctionData(
+    functionFragment: "withdrawLockedTokens",
+    values: [PromiseOrValue<string>, PromiseOrValue<BigNumberish>]
+  ): string;
 
   decodeFunctionResult(
     functionFragment: "agentAcceptDepositTransaction",
@@ -224,6 +236,10 @@ export interface NashEscrowInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "cancelTransaction",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "checkLockedTokenAmount",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -278,6 +294,10 @@ export interface NashEscrowInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(
+    functionFragment: "withdrawLockedTokens",
     data: BytesLike
   ): Result;
 
@@ -462,6 +482,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
+    checkLockedTokenAmount(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -538,6 +563,12 @@ export interface NashEscrow extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
+
+    withdrawLockedTokens(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<ContractTransaction>;
   };
 
   agentAcceptDepositTransaction(
@@ -561,6 +592,11 @@ export interface NashEscrow extends BaseContract {
     _transactionid: PromiseOrValue<BigNumberish>,
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
+
+  checkLockedTokenAmount(
+    tokenAddress: PromiseOrValue<string>,
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   clientConfirmPayment(
     _transactionid: PromiseOrValue<BigNumberish>,
@@ -637,6 +673,12 @@ export interface NashEscrow extends BaseContract {
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
+  withdrawLockedTokens(
+    tokenAddress: PromiseOrValue<string>,
+    amount: PromiseOrValue<BigNumberish>,
+    overrides?: Overrides & { from?: PromiseOrValue<string> }
+  ): Promise<ContractTransaction>;
+
   callStatic: {
     agentAcceptDepositTransaction(
       _transactionid: PromiseOrValue<BigNumberish>,
@@ -659,6 +701,11 @@ export interface NashEscrow extends BaseContract {
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
+
+    checkLockedTokenAmount(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
@@ -728,6 +775,12 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<void>;
+
+    withdrawLockedTokens(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<void>;
   };
@@ -809,6 +862,11 @@ export interface NashEscrow extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
+    checkLockedTokenAmount(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
     clientConfirmPayment(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
@@ -883,6 +941,12 @@ export interface NashEscrow extends BaseContract {
       newOwner: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
+
+    withdrawLockedTokens(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<BigNumber>;
   };
 
   populateTransaction: {
@@ -906,6 +970,11 @@ export interface NashEscrow extends BaseContract {
     cancelTransaction(
       _transactionid: PromiseOrValue<BigNumberish>,
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    checkLockedTokenAmount(
+      tokenAddress: PromiseOrValue<string>,
+      overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
     clientConfirmPayment(
@@ -984,6 +1053,12 @@ export interface NashEscrow extends BaseContract {
 
     transferOwnership(
       newOwner: PromiseOrValue<string>,
+      overrides?: Overrides & { from?: PromiseOrValue<string> }
+    ): Promise<PopulatedTransaction>;
+
+    withdrawLockedTokens(
+      tokenAddress: PromiseOrValue<string>,
+      amount: PromiseOrValue<BigNumberish>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
   };
