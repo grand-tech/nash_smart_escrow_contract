@@ -9,12 +9,12 @@ import { EMPTY_ADDRESS } from "../utils/test-constants";
 
 describe("Transaction Initialize Deposit Transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     const tx = await nashEscrow.getTransactionByIndex(0);
@@ -44,11 +44,11 @@ describe("Transaction Initialize Deposit Transaction.", function () {
       "Should not have agent`s encrypted payment information."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should have the correct exchange token address."
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should have the correct exchange token label."
     );
 
@@ -62,22 +62,22 @@ describe("Transaction Initialize Deposit Transaction.", function () {
   });
 
   it("Check if it reverts with amount as zero...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     await expect(
-      nashEscrow.initializeDepositTransaction(0, cUSD.address, tokenLabel)
+      nashEscrow.initializeDepositTransaction(0, USDc.address, tokenLabel)
     ).to.revertedWith("Amount to deposit must be greater than 0.");
   });
 
   it("Check if it reverts with amount as -1...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     await expect(
-      nashEscrow.initializeDepositTransaction(-1, cUSD.address, tokenLabel)
+      nashEscrow.initializeDepositTransaction(-1, USDc.address, tokenLabel)
     ).to.rejected;
   });
 });

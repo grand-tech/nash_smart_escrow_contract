@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export type { NashEscrow } from "./NashEscrow";
-export type { CUSD } from "./CUSD";
+export type { USDc } from "./USDc";

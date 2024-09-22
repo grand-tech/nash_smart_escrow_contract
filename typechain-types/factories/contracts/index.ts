@@ -2,4 +2,4 @@
 /* tslint:disable */
 /* eslint-disable */
 export { NashEscrow__factory } from "./NashEscrow__factory";
-export { CUSD__factory } from "./CUSD__factory";
+export { USDc__factory } from "./USDc__factory";

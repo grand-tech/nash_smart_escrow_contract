@@ -9,27 +9,27 @@ import { PAYMENT_INFO } from "../utils/test-constants";
 
 describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const clientSigner = address2;
     const agentSigner = owner;
 
-    let clientBalance = await cUSD.balanceOf(clientSigner.address);
-    let agentBalance = await cUSD.balanceOf(agentSigner.address);
+    let clientBalance = await USDc.balanceOf(clientSigner.address);
+    let agentBalance = await USDc.balanceOf(agentSigner.address);
 
     expect(clientBalance).to.equal(BigNumber.from("0"));
     expect(agentBalance).to.equal(BigNumber.from("100"));
-    await cUSD.connect(agentSigner).approve(nashEscrow.address, 10);
+    await USDc.connect(agentSigner).approve(nashEscrow.address, 10);
 
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
     await expect(
@@ -38,8 +38,8 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
         .agentAcceptDepositTransaction(0, PAYMENT_INFO)
     ).to.emit(nashEscrow, "AgentPairingEvent");
 
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
-    agentBalance = await cUSD.balanceOf(agentSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
+    agentBalance = await USDc.balanceOf(agentSigner.address);
 
     expect(clientBalance).to.equal(BigNumber.from("0"));
     expect(agentBalance).to.equal(BigNumber.from("95"));
@@ -74,11 +74,11 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
       "Should have agent`s payment information."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should have the correct exchange token address"
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should have the correct exchange token label"
     );
 
@@ -91,13 +91,13 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   });
 
   it("Test with clients address...", async function () {
-    const { tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -106,14 +106,14 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   });
 
   it("Test on withdraw transaction.", async function () {
-    const { address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -126,18 +126,18 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   });
 
   it("Test with already paired transaction...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const clientSigner = address2;
     const agentSigner = owner;
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -154,18 +154,18 @@ describe("Transaction Agent Accept/Fulfill Deposit Transaction.", function () {
   });
 
   it("Test agent with invalid balance...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const clientSigner = owner;
     const agentSigner = address2;
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
