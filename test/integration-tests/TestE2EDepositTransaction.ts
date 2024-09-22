@@ -9,29 +9,29 @@ import { loadFixture } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("Deposit E2E", function () {
   it("Test end to end deposit tx", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const agentSigner = owner;
     const clientSigner = address2;
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     expect(await nashEscrow.getNextTransactionIndex()).to.equal(0);
 
-    let agentBalance = await cUSD.balanceOf(agentSigner.address);
-    let clientBalance = await cUSD.balanceOf(clientSigner.address);
+    let agentBalance = await USDc.balanceOf(agentSigner.address);
+    let clientBalance = await USDc.balanceOf(clientSigner.address);
 
     // Initialize top up transaction.
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     // Check balances after method call.
-    agentBalance = await cUSD.balanceOf(agentSigner.address);
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    agentBalance = await USDc.balanceOf(agentSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("100"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
@@ -49,8 +49,8 @@ describe("Deposit E2E", function () {
         .clientWritePaymentInformation(0, "test client number")
     ).to.emit(nashEscrow, "SavedClientCommentEvent");
     // Check balances after method call.
-    agentBalance = await cUSD.balanceOf(agentSigner.address);
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    agentBalance = await USDc.balanceOf(agentSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("95"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
@@ -60,8 +60,8 @@ describe("Deposit E2E", function () {
     ).to.emit(nashEscrow, "ConfirmationCompletedEvent");
 
     // Check balances after method call.
-    agentBalance = await cUSD.balanceOf(agentSigner.address);
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    agentBalance = await USDc.balanceOf(agentSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
     expect(agentBalance).to.equal(BigNumber.from("95"));
     expect(clientBalance).to.equal(BigNumber.from("0"));
 
@@ -71,8 +71,8 @@ describe("Deposit E2E", function () {
     ).to.emit(nashEscrow, "TransactionCompletionEvent");
 
     // Check balances after method call.
-    agentBalance = await cUSD.balanceOf(agentSigner.address);
-    clientBalance = await cUSD.balanceOf(clientSigner.address);
+    agentBalance = await USDc.balanceOf(agentSigner.address);
+    clientBalance = await USDc.balanceOf(clientSigner.address);
 
     expect(agentBalance).to.equal(BigNumber.from("95"));
     expect(clientBalance).to.equal(BigNumber.from("5"));

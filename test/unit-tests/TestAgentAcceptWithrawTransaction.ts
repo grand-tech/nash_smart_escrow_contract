@@ -9,19 +9,19 @@ import { PAYMENT_INFO } from "../utils/test-constants";
 
 describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    let clientBalance = await cUSD.balanceOf(owner.address);
+    let clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    clientBalance = await cUSD.balanceOf(owner.address);
+    clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("95"));
 
     await expect(
@@ -60,11 +60,11 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
       "Should have agent`s payment information."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should have the correct exchange token address"
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should have the correct exchange token label"
     );
 
@@ -77,13 +77,13 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
   });
 
   it("Test with clients address...", async function () {
-    const { tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -92,14 +92,14 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
   });
 
   it("Test on deposit transaction.", async function () {
-    const { address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeDepositTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -112,13 +112,13 @@ describe("Transaction Agent Accept/Fulfill Withdraw Transaction.", function () {
   });
 
   it("Test with already paired transaction...", async function () {
-    const { address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(

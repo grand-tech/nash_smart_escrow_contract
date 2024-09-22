@@ -9,19 +9,19 @@ import { EMPTY_ADDRESS } from "../utils/test-constants";
 
 describe("Transaction Initialize Withdraw Transaction.", function () {
   it("Check if all transaction fields have the correct value...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    let clientBalance = await cUSD.balanceOf(owner.address);
+    let clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
-    clientBalance = await cUSD.balanceOf(owner.address);
+    clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("95"));
 
     const tx = await nashEscrow.getTransactionByIndex(0);
@@ -54,11 +54,11 @@ describe("Transaction Initialize Withdraw Transaction.", function () {
       "Should not have the agent`s payment details."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should not have the correct exchange token address."
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should not have the correct exchange token label."
     );
 
@@ -71,48 +71,48 @@ describe("Transaction Initialize Withdraw Transaction.", function () {
   });
 
   it("Check if it reverts with amount as zero...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    let clientBalance = await cUSD.balanceOf(owner.address);
+    let clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
-    await cUSD.approve(nashEscrow.address, 10);
+    await USDc.approve(nashEscrow.address, 10);
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(0, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(0, USDc.address, tokenLabel)
     ).to.revertedWith("Amount to withdraw must be greater than 0.");
 
-    clientBalance = await cUSD.balanceOf(owner.address);
+    clientBalance = await USDc.balanceOf(owner.address);
     expect(clientBalance).to.equal(BigNumber.from("100"));
   });
 
   it("Check if it reverts with amount as -1...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     await expect(
-      nashEscrow.initializeWithdrawalTransaction(-1, cUSD.address, tokenLabel)
+      nashEscrow.initializeWithdrawalTransaction(-1, USDc.address, tokenLabel)
     ).to.rejected;
   });
 
   it("Withdraw amount greater that users balance...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
-    let clientBalance = await cUSD.balanceOf(address2.address);
+    let clientBalance = await USDc.balanceOf(address2.address);
     expect(clientBalance).to.equal(BigNumber.from("0"));
-    await cUSD.connect(address2).approve(nashEscrow.address, 10);
+    await USDc.connect(address2).approve(nashEscrow.address, 10);
 
     await expect(
       nashEscrow
         .connect(address2)
-        .initializeWithdrawalTransaction(5, cUSD.address, tokenLabel)
-    ).to.revertedWith("Balance not enough");
+        .initializeWithdrawalTransaction(5, USDc.address, tokenLabel)
+    ).to.revertedWith("ERC20: transfer amount exceeds balance");
 
-    clientBalance = await cUSD.balanceOf(address2.address);
+    clientBalance = await USDc.balanceOf(address2.address);
     expect(clientBalance).to.equal(BigNumber.from("0"));
   });
 });

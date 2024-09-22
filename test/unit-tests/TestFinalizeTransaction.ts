@@ -8,18 +8,18 @@ import { PAYMENT_INFO } from "../utils/test-constants";
 
 describe("Agent confirm/approve transaction.", function () {
   it("Call finalizing method from agent confirmation method...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const clientSigner = address2;
     const agentSigner = owner;
-    await cUSD.connect(agentSigner).approve(nashEscrow.address, 10);
+    await USDc.connect(agentSigner).approve(nashEscrow.address, 10);
 
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -71,11 +71,11 @@ describe("Agent confirm/approve transaction.", function () {
       "Should have agent`s payment information."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should have the correct exchange token address"
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should have the correct exchange token label"
     );
 
@@ -88,18 +88,18 @@ describe("Agent confirm/approve transaction.", function () {
   });
 
   it("Call finalizing method from client confirmation method...", async function () {
-    const { owner, address2, tokenLabel, nashEscrow, cUSD } = await loadFixture(
+    const { owner, address2, tokenLabel, nashEscrow, USDc } = await loadFixture(
       deployNashEscrowContract
     );
 
     const clientSigner = address2;
     const agentSigner = owner;
-    await cUSD.connect(agentSigner).approve(nashEscrow.address, 10);
+    await USDc.connect(agentSigner).approve(nashEscrow.address, 10);
 
     await expect(
       nashEscrow
         .connect(clientSigner)
-        .initializeDepositTransaction(5, cUSD.address, tokenLabel)
+        .initializeDepositTransaction(5, USDc.address, tokenLabel)
     ).to.emit(nashEscrow, "TransactionInitEvent");
 
     await expect(
@@ -151,11 +151,11 @@ describe("Agent confirm/approve transaction.", function () {
       "Should have agent`s payment information."
     );
     expect(nashTx.exchangeToken).to.equal(
-      cUSD.address,
+      USDc.address,
       "Should have the correct exchange token address"
     );
     expect(nashTx.exchangeTokenLabel).to.equal(
-      "cUSD",
+      "USDc",
       "Should have the correct exchange token label"
     );
 

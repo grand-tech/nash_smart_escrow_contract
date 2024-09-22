@@ -29,6 +29,10 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ContextUpgradeable__factory>;
     getContractFactory(
+      name: "Ownable",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.Ownable__factory>;
+    getContractFactory(
       name: "ERC20",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.ERC20__factory>;
@@ -41,13 +45,13 @@ declare module "hardhat/types/runtime" {
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.IERC20__factory>;
     getContractFactory(
-      name: "CUSD",
-      signerOrOptions?: ethers.Signer | FactoryOptions
-    ): Promise<Contracts.CUSD__factory>;
-    getContractFactory(
       name: "NashEscrow",
       signerOrOptions?: ethers.Signer | FactoryOptions
     ): Promise<Contracts.NashEscrow__factory>;
+    getContractFactory(
+      name: "USDc",
+      signerOrOptions?: ethers.Signer | FactoryOptions
+    ): Promise<Contracts.USDc__factory>;
 
     getContractAt(
       name: "OwnableUpgradeable",
@@ -70,6 +74,11 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.ContextUpgradeable>;
     getContractAt(
+      name: "Ownable",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.Ownable>;
+    getContractAt(
       name: "ERC20",
       address: string,
       signer?: ethers.Signer
@@ -85,15 +94,15 @@ declare module "hardhat/types/runtime" {
       signer?: ethers.Signer
     ): Promise<Contracts.IERC20>;
     getContractAt(
-      name: "CUSD",
-      address: string,
-      signer?: ethers.Signer
-    ): Promise<Contracts.CUSD>;
-    getContractAt(
       name: "NashEscrow",
       address: string,
       signer?: ethers.Signer
     ): Promise<Contracts.NashEscrow>;
+    getContractAt(
+      name: "USDc",
+      address: string,
+      signer?: ethers.Signer
+    ): Promise<Contracts.USDc>;
 
     // default types
     getContractFactory(
